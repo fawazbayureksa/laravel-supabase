@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Profile;
 use App\Models\User;
-use Illuminate\Support\Facades\Request;
 
 class UserPreferenceService
 {
