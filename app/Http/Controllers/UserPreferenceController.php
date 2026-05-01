@@ -16,19 +16,28 @@ class UserPreferenceController extends Controller
     /**
      * Update user preferences.
      */
-    public function update(Request $request): JsonResponse
+    public function update(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'theme' => 'string|in:light,dark',
-            'notifications' => 'boolean',
+            'notifications' => 'sometimes',
         ]);
 
-        $user = $this->preferenceService->updatePreferences(Auth::user(), $validated);
+        $data = [
+            'theme' => $request->theme,
+            'notifications' => $request->boolean('notifications'),
+        ];
 
-        return response()->json([
-            'message' => 'Preferences updated successfully',
-            'preferences' => $user->preferences,
-        ]);
+        $user = $this->preferenceService->updatePreferences(Auth::user(), $data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Preferences updated successfully',
+                'preferences' => $user->preferences,
+            ]);
+        }
+
+        return back()->with('status', 'preferences-updated');
     }
 
     /**
