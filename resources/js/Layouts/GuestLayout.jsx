@@ -17,7 +17,7 @@ export default function GuestLayout({ children }) {
                         <LayoutDashboard size={36} />
                     </div>
                     <h1 className="font-extrabold text-2xl tracking-tight">
-                        Supabase<span className="text-[#1F6F5F]">Auth</span>
+                        Sotta<span className="text-[#1F6F5F]">.</span>
                     </h1>
                 </Link>
             </motion.div>
@@ -36,7 +36,7 @@ export default function GuestLayout({ children }) {
 
             {/* Footer */}
             <p className="mt-8 text-xs text-gray-400 font-medium">
-                &copy; 2026 SupabaseAuth &bull; All rights reserved
+                &copy; 2026 Sotta &bull; All rights reserved
             </p>
         </div>
     );
