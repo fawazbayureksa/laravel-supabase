@@ -28,6 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+
+        $request->user()->last_login_at  = now();
+        $request->user()->current_device = $request->userAgent() . ' IP ' . $request->ip();
+        $request->user()->save();
+
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

@@ -11,7 +11,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard', [
-        'user' => Auth::user()->load('profile')
+        'user' => Auth::user()
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

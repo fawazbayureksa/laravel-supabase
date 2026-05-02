@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
+use App\Services\UserPreferenceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,13 +13,29 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+
+    /**
+     * user preferences service
+     */
+    protected UserPreferenceService $userPreferenceService;
+
+    public function __construct(UserPreferenceService $userPreferenceService)
+    {
+        $this->userPreferenceService = $userPreferenceService;
+    }
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
+        $user = Auth::user();
+
+        if ($user) {
+            User::with('profile')->where('id', $user->id)->first();
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -26,11 +44,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
 
+        $request->user()->fill($request->validated());
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+
+        $this->userPreferenceService->updateProfile($request->user()->id, $request);
 
         $request->user()->save();
 
