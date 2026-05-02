@@ -26,15 +26,15 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
         $user = Auth::user();
 
         if ($user) {
-            User::with('profile')->where('id', $user->id)->first();
+            $user->load('profile');
         }
 
-        return view('profile.edit', [
+        return \Inertia\Inertia::render('Profile/Edit', [
             'user' => $user,
         ]);
     }
