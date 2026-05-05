@@ -51,7 +51,7 @@ export default function Index({ posts, auth }) {
                                 </div>
                             </div>
                         </Card.Body>
-                        <Card.Footer className="flex justify-between items-center py-3">
+                        <Card.Footer className="flex justify-between items-center py-3 bg-gray-50 dark:bg-[#0f0f0f]">
                             <div className="flex gap-1">
                                 <button className="p-2 rounded-xl text-gray-400 hover:text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
                                     <ImageIcon size={20} />
