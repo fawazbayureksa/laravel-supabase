@@ -13,6 +13,8 @@ import {
     User as UserIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ActionIcon from '@/Components/ActionIcon';
+import { route } from 'ziggy-js';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
@@ -73,10 +75,6 @@ export default function AuthenticatedLayout({ header, children }) {
                             </span>
                         </Link>
 
-                        <div className="hidden md:flex items-center gap-1">
-                            <NavItem href={route('dashboard')} active={route().current('dashboard')}>Dashboard</NavItem>
-                            <NavItem href={route('profile.edit')} active={route().current('profile.edit')}>Profile</NavItem>
-                        </div>
                     </div>
 
                     {/* Right actions */}
@@ -170,6 +168,23 @@ export default function AuthenticatedLayout({ header, children }) {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* ── Sidebar ── */}
+            <aside className="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3 p-2.5 bg-white/60 dark:bg-[#111]/60 backdrop-blur-xl border-y border-r border-gray-200/50 dark:border-white/5 rounded-r-2xl shadow-2xl shadow-[#1F6F5F]/5">
+                <ActionIcon
+                    icon={LayoutDashboard}
+                    isActive={route().current('dashboard')}
+                    href={route('dashboard')}
+                    className="w-10 h-10"
+                />
+                <ActionIcon
+                    icon={UserIcon}
+                    isActive={route().current('profile.edit')}
+                    onClick={() => router.visit(route('profile.edit'))}
+                    className="w-10 h-10"
+                />
+            </aside>
+
 
             {/* ── Page content ── */}
             <main className="max-w-7xl mx-auto px-6 lg:px-10 pt-28 pb-20">
