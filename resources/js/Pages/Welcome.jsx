@@ -15,7 +15,7 @@ export default function Welcome({ auth }) {
                             <LayoutDashboard size={20} />
                         </div>
                         <span className="font-extrabold text-xl tracking-tight">
-                            Supabase<span className="text-[#1F6F5F]">Auth</span>
+                            Sotta<span className="text-[#1F6F5F]">.</span>
                         </span>
                     </Link>
 
@@ -116,7 +116,7 @@ export default function Welcome({ auth }) {
                         <div className="w-6 h-6 bg-[#1F6F5F] rounded-lg flex items-center justify-center text-white">
                             <LayoutDashboard size={14} />
                         </div>
-                        <span className="font-semibold">SupabaseAuth &copy; 2026</span>
+                        <span className="font-semibold">Sotta &copy; 2026</span>
                     </div>
                     <span>Built for the Laravel community</span>
                 </div>

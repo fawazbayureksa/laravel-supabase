@@ -69,7 +69,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <LayoutDashboard size={20} />
                             </div>
                             <span className="font-extrabold text-xl tracking-tight text-[#1a1a1a] dark:text-white leading-none">
-                                Supabase<span className="text-[#1F6F5F]">Auth</span>
+                                Sotta<span className="text-[#1F6F5F]">.</span>
                             </span>
                         </Link>
 
