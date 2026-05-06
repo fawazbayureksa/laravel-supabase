@@ -13,7 +13,7 @@ class PostController extends Controller
     protected $postService;
     public function __construct(PostService $postService)
     {
-       $this->postService = $postService;
+        $this->postService = $postService;
     }
 
     public function index()
@@ -22,6 +22,16 @@ class PostController extends Controller
         return Inertia::render('Posts/index', [
             'posts' => $posts,
             'auth' => Auth::user()
+        ]);
+    }
+
+    public function like($id)
+    {
+        $post = $this->postService->like($id);
+        return response()->json([
+            'post' => $post,
+            'is_liked' => $post->likedBy(Auth::user()),
+            'likes_count' => $post->likes()->count(),
         ]);
     }
 }

@@ -11,6 +11,7 @@ import {
     Sun,
     ChevronRight,
     User as UserIcon,
+    LogIn,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ActionIcon from '@/Components/ActionIcon';
@@ -18,14 +19,14 @@ import { route } from 'ziggy-js';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
-    const user = auth.user;
+    const user = auth?.user;
 
     const savedTheme = user?.preferences?.theme ?? 'light';
     const [theme, setTheme] = useState(savedTheme);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [isLoggedIn,setIsLoggedIn] = useState(false);
 
-    // Apply theme class to <html> on mount and when theme changes
     useEffect(() => {
         const root = document.documentElement;
         if (theme === 'dark') {
@@ -34,6 +35,12 @@ export default function AuthenticatedLayout({ header, children }) {
             root.classList.remove('dark');
         }
     }, [theme]);
+
+    useEffect(()=> {
+        if(user != null || user){
+            setIsLoggedIn(true);
+        }
+    })
 
     // Persist theme to server
     const toggleTheme = () => {
@@ -93,23 +100,37 @@ export default function AuthenticatedLayout({ header, children }) {
                         {/* Avatar + name */}
                         <Link href={route('profile.edit')} className="flex items-center gap-2.5 group">
                             <div className="w-8 h-8 rounded-lg bg-[#1F6F5F]/10 text-[#1F6F5F] flex items-center justify-center font-bold text-sm border border-[#1F6F5F]/15 group-hover:border-[#1F6F5F]/35 transition-colors">
-                                {user?.name?.charAt(0)?.toUpperCase()}
+                                {user?.name?.charAt(0)?.toUpperCase() || 'A'}
                             </div>
                             <div className="hidden lg:block leading-none">
                                 <p className="text-sm font-semibold text-[#1a1a1a] dark:text-white">{user?.name}</p>
-                                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">{user?.role ?? 'Member'}</p>
+                                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">{user?.role ?? 'Sign in'}</p>
                             </div>
                         </Link>
 
+
+
                         {/* Logout */}
-                        <Link
+                        {!isLoggedIn && 
+                            <Link
+                            href={route('login')}
+                            method="post"
+                            as="button"
+                            className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                            >
+                                <LogIn size={18} />
+                            </Link>
+                        }
+                        {isLoggedIn && 
+                            <Link
                             href={route('logout')}
                             method="post"
                             as="button"
                             className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                        >
-                            <LogOut size={18} />
-                        </Link>
+                            >
+                                <LogOut size={18} />
+                            </Link>
+                        }
                     </div>
 
                     {/* Mobile burger */}

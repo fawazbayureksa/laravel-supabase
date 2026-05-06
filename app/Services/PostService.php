@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -32,9 +32,44 @@ class PostService
     {
         return $this->postRepository->update($id, $data);
     }
-    
+
     public function delete($id)
     {
         return $this->postRepository->delete($id);
     }
+
+    public function like($id)
+    {
+        return $this->postRepository->like($id);
+    }
+
+    // public function unlike($id)
+    // {
+    //     return $this->postRepository->unlike($id);
+    // }
+
+    // public function getUserPost($id)
+    // {
+    //     return $this->postRepository->getUserPost($id);
+    // }
+
+    // public function getUserComment($id)
+    // {
+    //     return $this->postRepository->getUserComment($id);
+    // }
+
+    // public function getUserLike($id)
+    // {
+    //     return $this->postRepository->getUserLike($id);
+    // }
+
+    // public function getUserFollower($id)
+    // {
+    //     return $this->postRepository->getUserFollower($id);
+    // }
+
+    // public function getUserFollowing($id)
+    // {
+    //     return $this->postRepository->getUserFollowing($id);
+    // }
 }
