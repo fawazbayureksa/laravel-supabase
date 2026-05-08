@@ -43,6 +43,21 @@ class PostService
         return $this->postRepository->like($id);
     }
 
+    public function bookmark($id)
+    {
+        return $this->postRepository->bookmark($id);
+    }
+
+    public function repost($id)
+    {
+        return $this->postRepository->repost($id);
+    }
+
+    public function comment($id, $data)
+    {
+        return $this->postRepository->comment($id, $data);
+    }
+
     // public function unlike($id)
     // {
     //     return $this->postRepository->unlike($id);

@@ -16,35 +16,142 @@ import {
     Image as ImageIcon
 } from 'lucide-react';
 import axios from 'axios';
+import CommentModal from '@/Components/CommentModal';
 
 export default function Index({ posts, auth = null }) {
-    const [data, setData] = useState();
-    const [userLoggedIn, setUserLoggedIn] = useState(null);
-
-
-    useEffect(() => {
-        setData(posts.data);
-        setUserLoggedIn(auth);
-    }, []);
+    const [data, setData] = useState(posts.data);
+    const [userLoggedIn, setUserLoggedIn] = useState(auth);
+    const [commentModalOpen, setCommentModalOpen] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [commentProcessing, setCommentProcessing] = useState(false);
 
 
     const handleLike = (id) => {
-        axios.post(`/posts/like/${id}`).then((response) => {
-            setData(prev => {
-                return prev?.map(item => {
-                    if (item.id === id) {
-                        return {
+        const post = data?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsLiked = !post.is_liked;
+        const delta = newIsLiked ? 1 : -1;
+        const newLikesCount = Math.max(0, (post.likes_count || 0) + delta);
+
+        setData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_liked: newIsLiked, likes_count: newLikesCount }
+                : item
+        ));
+
+        axios.post(`/posts/like/${id}`)
+            .then((response) => {
+                setData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
                             ...item,
                             is_liked: response.data.is_liked,
+                            likes_count: response.data.likes_count
                         }
-                    }
-                    return item
-                })
-                // console.log(prev?.data?.map(item => {
-                //     return item.id === id
-                // }));
+                        : item
+                ));
             })
-        });
+            .catch((error) => {
+                console.error("Failed to like post:", error);
+                setData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    }
+
+    const handleBookmark = (id) => {
+        const post = data?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsBookmarked = !post.is_bookmarked;
+        const delta = newIsBookmarked ? 1 : -1;
+        const newBookmarksCount = Math.max(0, (post.bookmarks_count || 0) + delta);
+
+        setData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_bookmarked: newIsBookmarked, bookmarks_count: newBookmarksCount }
+                : item
+        ));
+
+        axios.post(`/posts/bookmark/${id}`)
+            .then((response) => {
+                setData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_bookmarked: response.data.is_bookmarked,
+                            bookmarks_count: response.data.bookmarks_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to bookmark post:", error);
+                setData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    }
+
+    const handleRepost = (id) => {
+        const post = data?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsReposted = !post.is_reposted;
+        const delta = newIsReposted ? 1 : -1;
+        const newRepostsCount = Math.max(0, (post.reposts_count || 0) + delta);
+
+        setData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_reposted: newIsReposted, reposts_count: newRepostsCount }
+                : item
+        ));
+
+        axios.post(`/posts/repost/${id}`)
+            .then((response) => {
+                setData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_reposted: response.data.is_reposted,
+                            reposts_count: response.data.reposts_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to repost:", error);
+                setData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    }
+
+    const handleComment = (id) => {
+        const post = data?.find(p => p.id === id);
+        if (!post) return;
+        setSelectedPost(post);
+        setCommentModalOpen(true);
+    }
+
+    const submitComment = (body) => {
+        if (!selectedPost) return;
+        setCommentProcessing(true);
+
+        axios.post(`/posts/comment/${selectedPost.id}`, { body })
+            .then((response) => {
+                setData(prev => prev?.map(item =>
+                    item.id === selectedPost.id
+                        ? { ...item, comments_count: response.data.comments_count }
+                        : item
+                ));
+                setCommentModalOpen(false);
+                setSelectedPost(null);
+            })
+            .catch((error) => {
+                console.error("Failed to comment:", error);
+            })
+            .finally(() => {
+                setCommentProcessing(false);
+            });
     }
 
     return (
@@ -125,17 +232,28 @@ export default function Index({ posts, auth = null }) {
                                             />
                                             <ActionIcon
                                                 icon={MessageCircle}
+                                                onClick={() => handleComment(post?.id)}
                                                 count={post.comments_count || 0}
                                             />
                                             <ActionIcon
                                                 icon={Repeat2}
+                                                onClick={() => handleRepost(post?.id)}
                                                 count={post.reposts_count || 0}
-                                                inactiveClassName="text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                                                isActive={post.is_reposted}
+                                                activeClassName="text-green-500 bg-green-50 dark:bg-green-500/10"
+                                                inactiveClassName="text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10"
                                             />
                                         </div>
 
                                         <div className="flex items-center gap-1">
-                                            <ActionIcon icon={Bookmark} />
+                                            <ActionIcon
+                                                icon={Bookmark}
+                                                onClick={() => handleBookmark(post?.id)}
+                                                count={post.bookmarks_count || 0}
+                                                isActive={post.is_bookmarked}
+                                                activeClassName="text-blue-500 bg-blue-50 dark:bg-blue-500/10"
+                                                inactiveClassName="text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                                            />
                                             <ActionIcon icon={Share2} />
                                         </div>
                                     </div>
@@ -145,6 +263,18 @@ export default function Index({ posts, auth = null }) {
                     </div>
                 </div>
             </div>
+
+            <CommentModal
+                show={commentModalOpen}
+                onClose={() => {
+                    setCommentModalOpen(false);
+                    setSelectedPost(null);
+                }}
+                post={selectedPost}
+                user={userLoggedIn}
+                onSubmit={submitComment}
+                processing={commentProcessing}
+            />
         </AuthenticatedLayout>
     );
 }

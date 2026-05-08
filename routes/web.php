@@ -29,7 +29,10 @@ Route::middleware('auth')->group(function () {
 
     // Post Routes
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-    Route::post('posts/like/{id}',[PostController::class,'like'])->name('posts.like');
+    Route::post('posts/like/{id}', [PostController::class, 'like'])->name('posts.like');
+    Route::post('posts/bookmark/{id}', [PostController::class, 'bookmark'])->name('posts.bookmark');
+    Route::post('posts/repost/{id}', [PostController::class, 'repost'])->name('posts.repost');
+    Route::post('posts/comment/{id}', [PostController::class, 'comment'])->name('posts.comment');
 });
 
 require __DIR__ . '/auth.php';
