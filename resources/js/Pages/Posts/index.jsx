@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { Head } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import TextArea from '@/Components/TextArea';
 import Button from '@/Components/Button';
 import ActionIcon from '@/Components/ActionIcon';
@@ -154,6 +154,10 @@ export default function Index({ posts, auth = null }) {
             });
     }
 
+    const handleDetailPost = (id) => {
+        router.get(`/posts/${id}`);
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title="Posts" />
@@ -191,7 +195,7 @@ export default function Index({ posts, auth = null }) {
                     {/* Posts Feed */}
                     <div className="space-y-4">
                         {data?.map((post) => (
-                            <Card key={post.id} className="transition-all hover:shadow-md">
+                            <Card key={post.id} className="transition-all hover:shadow-md cursor-pointer" onClick={() => handleDetailPost(post.id)}>
                                 <Card.Body className="p-5">
                                     {/* Post Header */}
                                     <div className="flex justify-between items-start mb-4">
