@@ -15,17 +15,37 @@ import {
     Repeat2,
     Image as ImageIcon
 } from 'lucide-react';
+import axios from 'axios';
 
-export default function Index({ posts, auth }) {
-    const [data, setData] = useState(posts);
-    const [userLoggedIn, setUserLoggedIn] = useState(auth);
+export default function Index({ posts, auth = null }) {
+    const [data, setData] = useState();
+    const [userLoggedIn, setUserLoggedIn] = useState(null);
 
 
     useEffect(() => {
-        setData(posts);
+        setData(posts.data);
         setUserLoggedIn(auth);
-    }, [posts]);
+    }, []);
 
+
+    const handleLike = (id) => {
+        axios.post(`/posts/like/${id}`).then((response) => {
+            setData(prev => {
+                return prev?.map(item => {
+                    if (item.id === id) {
+                        return {
+                            ...item,
+                            is_liked: response.data.is_liked,
+                        }
+                    }
+                    return item
+                })
+                // console.log(prev?.data?.map(item => {
+                //     return item.id === id
+                // }));
+            })
+        });
+    }
 
     return (
         <AuthenticatedLayout>
@@ -39,7 +59,7 @@ export default function Index({ posts, auth }) {
                             <div className='flex gap-4'>
                                 <div className="flex-shrink-0">
                                     <div className="w-10 h-10 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold">
-                                        {userLoggedIn.name[0] ?? 'U'}
+                                        {userLoggedIn?.name[0] ?? 'U'}
                                     </div>
                                 </div>
                                 <div className="flex-1">
@@ -63,7 +83,7 @@ export default function Index({ posts, auth }) {
 
                     {/* Posts Feed */}
                     <div className="space-y-4">
-                        {data.data.map((post) => (
+                        {data?.map((post) => (
                             <Card key={post.id} className="transition-all hover:shadow-md">
                                 <Card.Body className="p-5">
                                     {/* Post Header */}
@@ -98,7 +118,9 @@ export default function Index({ posts, auth }) {
                                         <div className="flex items-center gap-4 sm:gap-8">
                                             <ActionIcon
                                                 icon={Heart}
+                                                onClick={() => handleLike(post?.id)}
                                                 count={post.likes_count || 0}
+                                                isActive={post.is_liked}
                                                 activeClassName="text-red-500 bg-red-50 dark:bg-red-500/10"
                                             />
                                             <ActionIcon
