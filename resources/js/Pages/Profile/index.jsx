@@ -19,8 +19,16 @@ import {
     Image as ImageIcon,
     SquareKanban
 } from 'lucide-react';
+import { Tab, Tabs } from '@mui/material';
 
 export default function Index({ auth = null, user = null }) {
+
+    const [valueTab,setValueTab] = useState('post');
+
+  const handleTabs = (event, newValue) => {
+    setValueTab(newValue);
+  };
+
     return (
          <AuthenticatedLayout>
             <Head title="Profile" />
@@ -66,9 +74,19 @@ export default function Index({ auth = null, user = null }) {
                         {/*  */}
                         <div className='flex mt-10'>
                             <button
-                                class="w-full rounded-xl border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:shadow-md">
+                                className="w-full rounded-xl border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:shadow-md">
                                  Edit profile
                             </button>
+                        </div>
+                        <div className='mt-10 w-full'>
+                            <Tabs value={valueTab} onChange={handleTabs} 
+                            variant='fullWidth'
+                            textColor="primary" indicatorColor="primary" aria-label="secondary tabs example">
+                                <Tab value="post" label="Post" />
+                                <Tab value="replies" label="Replies" />
+                                <Tab value="repost" label="Repost" />
+                                <Tab value="media" label="Media" />
+                            </Tabs>
                         </div>
                     </Card>
                  </div>
