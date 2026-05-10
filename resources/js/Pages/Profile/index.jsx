@@ -88,6 +88,37 @@ export default function Index({ auth = null, user = null }) {
                                 <Tab value="media" label="Media" />
                             </Tabs>
                         </div>
+                        <div className='mt-5'>
+                          {valueTab != '' && valueTab == 'post' ? (
+                                <div className='w-ful'>
+                                       <div className="flex justify-between align-middle mt-6 max-h-10" animate={false}>
+                                                <div className='flex gap-4'>
+                                                    <div className="flex-shrink-0">
+                                                        <div className="w-10 h-10 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold">
+                                                            {/* {userLoggedIn?.name[0] ?? 'U'} */}
+                                                             <div>
+                                                                <ImageIcon size={30} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <TextArea
+                                                            // value={postContent}
+                                                            // onChange={(e) => setPostContent(e.target.value)}
+                                                            placeholder="Whats on your mind ?"
+                                                            className="border-none bg-transparent focus:ring-0 px-0 py-2 text-lg shadow-none"
+                                                            rows={2}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <Button variant="primary" size="sm">Post</Button>
+                                                </div>
+                                        </div>
+                                </div>
+                            ) : null
+                          }
+                        </div>
                     </Card>
                  </div>
              </div>
