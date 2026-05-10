@@ -156,7 +156,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     >
                         <nav className="flex flex-col gap-2 flex-1">
                             <MobileNavItem href={route('dashboard')} active={route().current('dashboard')}>Dashboard</MobileNavItem>
-                            <MobileNavItem href={route('profile.edit')} active={route().current('profile.edit')}>Profile</MobileNavItem>
+                            <MobileNavItem href={route('profile.index')} active={route().current('profile.index')}>Profile</MobileNavItem>
                         </nav>
 
                         <div className="pb-10 flex flex-col gap-3">
@@ -200,8 +200,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 />
                 <ActionIcon
                     icon={UserIcon}
-                    isActive={route().current('profile.edit')}
-                    onClick={() => router.visit(route('profile.edit'))}
+                    isActive={route().current('profile.index')}
+                    onClick={() => router.visit(route('profile.index'))}
                     className="w-10 h-10"
                 />
             </aside>
