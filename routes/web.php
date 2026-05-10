@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
     // Post Routes
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::post('posts', [PostController::class, 'create'])->name('posts.store');
     Route::post('posts/like/{id}', [PostController::class, 'like'])->name('posts.like');
     Route::post('posts/bookmark/{id}', [PostController::class, 'bookmark'])->name('posts.bookmark');
     Route::post('posts/repost/{id}', [PostController::class, 'repost'])->name('posts.repost');

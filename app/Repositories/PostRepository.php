@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,7 +63,7 @@ class PostRepository
 
     public function likeComment($id)
     {
-        $comment = \App\Models\Comment::findOrFail($id);
+        $comment = Comment::findOrFail($id);
         $comment->toggleLike(Auth::user());
         return $comment;
     }
@@ -74,12 +75,12 @@ class PostRepository
 
     public function update($id, $data)
     {
-        return Post::find($id)->update($data);
+        // return Post::find($id)->update($data);
     }
 
     public function delete($id)
     {
-        return Post::find($id)->delete();
+        // return Post::find($id)->delete();
     }
 
     public function like($id)
