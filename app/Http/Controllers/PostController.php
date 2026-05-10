@@ -34,4 +34,40 @@ class PostController extends Controller
             'likes_count' => $post->likes()->count(),
         ]);
     }
+
+    public function bookmark($id)
+    {
+        $post = $this->postService->bookmark($id);
+        return response()->json([
+            'post' => $post,
+            'is_bookmarked' => $post->bookmarkedBy(Auth::user()),
+            'bookmarks_count' => $post->bookmarks()->count(),
+        ]);
+    }
+
+    public function repost($id)
+    {
+        $post = $this->postService->repost($id);
+        return response()->json([
+            'post' => $post,
+            'is_reposted' => $post->repostedBy(Auth::user()),
+            'reposts_count' => $post->reposts()->count(),
+        ]);
+    }
+
+    public function comment(\Illuminate\Http\Request $request, $id)
+    {
+        $request->validate([
+            'body' => 'required|string',
+            'parent_id' => 'nullable|exists:comments,id'
+        ]);
+
+        $comment = $this->postService->comment($id, $request->all());
+        $post = $comment->post;
+
+        return response()->json([
+            'comment' => $comment,
+            'comments_count' => $post->comments()->count(),
+        ]);
+    }
 }

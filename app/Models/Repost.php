@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\Likable;
-use App\Traits\Bookmarkable;
-use App\Traits\Repostable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Repost extends Model
 {
-    use HasFactory, Likable, Bookmarkable, Repostable;
+    use HasFactory;
 
     protected $guarded = ['id'];
 
@@ -19,8 +16,8 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function comments()
+    public function post()
     {
-        return $this->hasMany(Comment::class);
+        return $this->belongsTo(Post::class);
     }
 }
