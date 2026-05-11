@@ -87,4 +87,8 @@ class PostService
     // {
     //     return $this->postRepository->getUserFollowing($id);
     // }
+    public function likeComment($id)
+    {
+        return $this->postRepository->likeComment($id);
+    }
 }

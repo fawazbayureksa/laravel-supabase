@@ -31,8 +31,20 @@ class PostRepository
 
     public function getById($id)
     {
-        $userId = Auth::user()->id;
-        return Post::with('user', 'likes')
+        $userId = Auth::id();
+        return Post::with([
+            'user',
+            'comments' => function ($query) use ($userId) {
+                $query->with('user')
+                    ->withCount(['likes', 'replies'])
+                    ->withExists([
+                        'likes as is_liked' => function ($q) use ($userId) {
+                            $q->where('user_id', $userId);
+                        }
+                    ])
+                    ->orderBy('created_at', 'asc');
+            }
+        ])
             ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
             ->withExists([
                 'likes as is_liked' => function ($query) use ($userId) {
@@ -45,7 +57,14 @@ class PostRepository
                     $query->where('user_id', $userId);
                 }
             ])
-            ->find($id);
+            ->findOrFail($id);
+    }
+
+    public function likeComment($id)
+    {
+        $comment = \App\Models\Comment::findOrFail($id);
+        $comment->toggleLike(Auth::user());
+        return $comment;
     }
 
     public function create($data)

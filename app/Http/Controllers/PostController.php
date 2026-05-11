@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use App\Services\PostService;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -55,7 +56,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function comment(\Illuminate\Http\Request $request, $id)
+    public function comment(Request $request, $id)
     {
         $request->validate([
             'body' => 'required|string',
@@ -68,6 +69,25 @@ class PostController extends Controller
         return response()->json([
             'comment' => $comment,
             'comments_count' => $post->comments()->count(),
+        ]);
+    }
+
+    public function show($id)
+    {
+        $post = $this->postService->getById($id);
+        return Inertia::render('Posts/show', [
+            'post' => $post,
+            'auth' => Auth::user()
+        ]);
+    }
+
+    public function likeComment($id)
+    {
+        $comment = $this->postService->likeComment($id);
+        return response()->json([
+            'comment' => $comment,
+            'is_liked' => $comment->likedBy(Auth::user()),
+            'likes_count' => $comment->likes()->count(),
         ]);
     }
 }

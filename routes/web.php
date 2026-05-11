@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::post('posts/bookmark/{id}', [PostController::class, 'bookmark'])->name('posts.bookmark');
     Route::post('posts/repost/{id}', [PostController::class, 'repost'])->name('posts.repost');
     Route::post('posts/comment/{id}', [PostController::class, 'comment'])->name('posts.comment');
+    Route::post('comments/like/{id}', [PostController::class, 'likeComment'])->name('comments.like');
+
+    Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
 });
 
 require __DIR__ . '/auth.php';
