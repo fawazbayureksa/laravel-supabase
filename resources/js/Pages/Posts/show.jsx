@@ -180,7 +180,7 @@ export default function Show({ post, auth = null }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Post Detail" />
+            <Head title="Post" />
             <div className="py-8 bg-gray-50 dark:bg-[#0f0f0f] min-h-screen">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -278,110 +278,85 @@ export default function Show({ post, auth = null }) {
                                     <ActionIcon icon={Share2} className="scale-110" />
                                 </div>
                             </div>
-                        </Card.Body>
-                    </Card>
 
-                    {/* Reply Section Trigger */}
-                    {/* <Card className="mb-8 cursor-pointer group" animate={false} onClick={() => handleReply(data)}>
-                        <Card.Body className="p-5">
-                            <div className='flex gap-4 items-center'>
-                                <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold">
-                                        {auth?.user?.name?.[0] || 'U'}
-                                    </div>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-gray-400 text-lg group-hover:text-gray-500 transition-colors">Post your reply...</p>
-                                </div>
-                                <Button 
-                                    variant="primary" 
-                                    size="sm" 
-                                    icon={SendHorizonal} 
-                                    className="opacity-50 group-hover:opacity-100 transition-opacity"
-                                >
-                                    Reply
-                                </Button>
-                            </div>
-                        </Card.Body>
-                    </Card> */}
+                            {/* <hr></hr> */}
+                            <div className="border-b border-gray-200 dark:border-white/4 mt-4"></div>
+                            <div className="border-b border-gray-200 dark:border-white/4 mt-8"></div>
 
-                    {/* Replies Header */}
-                    <div className="mb-4 px-2">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest">Replies</h3>
-                    </div>
-
-                    {/* Replies List */}
-                    <div className="space-y-4">
-                        {data.comments?.length > 0 ? (
-                            data.comments.map((comment) => (
-                                <Card key={comment.id} className="transition-all hover:shadow-md">
-                                    <Card.Body className="p-5">
-                                        {/* Reply Header */}
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1F6F5F]/20 to-[#2a917c]/20 flex items-center justify-center text-[#1F6F5F] dark:text-[#2a917c] font-bold text-sm">
-                                                    {comment.user?.name?.[0] || 'U'}
+                            <div className="space-y-4 mt-2">
+                                {data.comments?.length > 0 ? (
+                                    data.comments.map((comment) => (
+                                        <div key={comment.id} className="transition-all">
+                                            <div className="pt-3">
+                                                {/* Reply Header */}
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1F6F5F]/20 to-[#2a917c]/20 flex items-center justify-center text-[#1F6F5F] dark:text-[#2a917c] font-bold text-sm">
+                                                            {comment.user?.name?.[0] || 'U'}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-[15px]">
+                                                                {comment.user?.name || 'Anonymous User'}
+                                                            </h4>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                                                @{comment.user?.username || 'anonymous'} • {new Date(comment.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg">
+                                                        <MoreHorizontal size={18} />
+                                                    </button>
                                                 </div>
-                                                <div>
-                                                    <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-[15px]">
-                                                        {comment.user?.name || 'Anonymous User'}
-                                                    </h4>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                                        @{comment.user?.username || 'anonymous'} • {new Date(comment.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+
+                                                {/* Reply Body */}
+                                                <div className="mb-2 ml-13">
+                                                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap text-[15px]">
+                                                        {comment.body}
                                                     </p>
                                                 </div>
-                                            </div>
-                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg">
-                                                <MoreHorizontal size={18} />
-                                            </button>
-                                        </div>
 
-                                        {/* Reply Body */}
-                                        <div className="mb-4 ml-13">
-                                            <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap text-[15px]">
-                                                {comment.body}
-                                            </p>
-                                        </div>
+                                                {/* Reply Actions */}
+                                                <div className="flex justify-between items-center pt-2 mt-4  dark:border-white/4">
+                                                    <div className="flex items-center gap-4 sm:gap-8">
+                                                        <ActionIcon
+                                                            icon={Heart}
+                                                            onClick={() => handleLikeComment(comment.id)}
+                                                            count={comment.likes_count || 0}
+                                                            isActive={comment.is_liked}
+                                                            activeClassName="text-red-500 bg-red-50 dark:bg-red-500/10"
+                                                        />
+                                                        <ActionIcon
+                                                            icon={MessageCircle}
+                                                            onClick={() => handleReply(comment)}
+                                                            count={comment.replies_count || 0}
+                                                        />
+                                                        <ActionIcon
+                                                            icon={Repeat2}
+                                                            count={comment.reposts_count || 0}
+                                                            inactiveClassName="text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10"
+                                                        />
+                                                    </div>
 
-                                        {/* Reply Actions */}
-                                        <div className="flex justify-between items-center pt-2 mt-4 border-t border-gray-50 dark:border-white/4">
-                                            <div className="flex items-center gap-4 sm:gap-8">
-                                                <ActionIcon
-                                                    icon={Heart}
-                                                    onClick={() => handleLikeComment(comment.id)}
-                                                    count={comment.likes_count || 0}
-                                                    isActive={comment.is_liked}
-                                                    activeClassName="text-red-500 bg-red-50 dark:bg-red-500/10"
-                                                />
-                                                <ActionIcon
-                                                    icon={MessageCircle}
-                                                    onClick={() => handleReply(comment)}
-                                                    count={comment.replies_count || 0}
-                                                />
-                                                <ActionIcon
-                                                    icon={Repeat2}
-                                                    count={comment.reposts_count || 0}
-                                                    inactiveClassName="text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10"
-                                                />
-                                            </div>
-
-                                            <div className="flex items-center gap-1">
-                                                <ActionIcon
-                                                    icon={Bookmark}
-                                                    inactiveClassName="text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10"
-                                                />
-                                                <ActionIcon icon={Share2} />
+                                                    <div className="flex items-center gap-1">
+                                                        <ActionIcon
+                                                            icon={Bookmark}
+                                                            inactiveClassName="text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                                                        />
+                                                        <ActionIcon icon={Share2} />
+                                                    </div>
+                                                </div>
+                                                <div className="border-b border-gray-200 dark:border-white/4 mt-0"></div>
                                             </div>
                                         </div>
-                                    </Card.Body>
-                                </Card>
-                            ))
-                        ) : (
-                            <div className="py-12 text-center bg-white dark:bg-[#1a1a1a] rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
-                                <p className="text-gray-500 dark:text-gray-400 font-medium">No replies yet. Be the first to join the conversation!</p>
+                                    ))
+                                    ) : (
+                                    <div className="py-12 text-center bg-white dark:bg-[#1a1a1a] rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
+                                        <p className="text-gray-500 dark:text-gray-400 font-medium">No replies yet. Be the first to join the conversation!</p>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </Card.Body>
+                    </Card>
                 </div>
             </div>
 
