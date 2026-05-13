@@ -103,8 +103,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                 {user?.name?.charAt(0)?.toUpperCase() || 'A'}
                             </div>
                             <div className="hidden lg:block leading-none">
-                                <p className="text-sm font-semibold text-[#1a1a1a] dark:text-white">{user?.name}</p>
-                                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">{user?.role ?? 'Sign in'}</p>
+                                {/* <p className="text-sm font-semibold text-[#1a1a1a] dark:text-white">{user?.name}</p> */}
+                                {/* <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">{user?.name ?? 'Sign in'}</p> */}
                             </div>
                         </Link>
 
@@ -194,8 +194,8 @@ export default function AuthenticatedLayout({ header, children }) {
             <aside className="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3 p-2.5 bg-white/60 dark:bg-[#111]/60 backdrop-blur-xl border-y border-r border-gray-200/50 dark:border-white/5 rounded-r-2xl shadow-2xl shadow-[#1F6F5F]/5">
                 <ActionIcon
                     icon={LayoutDashboard}
-                    isActive={route().current('dashboard')}
-                    href={route('dashboard')}
+                    isActive={route().current('index')}
+                    onClick={() => router.visit(route('index'))}
                     className="w-10 h-10"
                 />
                 <ActionIcon

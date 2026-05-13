@@ -13,7 +13,10 @@ import {
     Bookmark,
     MoreHorizontal,
     Repeat2,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Smile,
+    MapPin,
+    Calendar
 } from 'lucide-react';
 import axios from 'axios';
 import CommentModal from '@/Components/CommentModal';
@@ -26,7 +29,8 @@ export default function Index({ posts, auth = null }) {
     const [commentProcessing, setCommentProcessing] = useState(false);
 
 
-    const handleLike = (id) => {
+    const handleLike = (e,id) => {
+        e.stopPropagation();
         const post = data?.find(p => p.id === id);
         if (!post) return;
 
@@ -59,7 +63,8 @@ export default function Index({ posts, auth = null }) {
             });
     }
 
-    const handleBookmark = (id) => {
+    const handleBookmark = (e,id) => {
+        e.stopPropagation();
         const post = data?.find(p => p.id === id);
         if (!post) return;
 
@@ -92,7 +97,8 @@ export default function Index({ posts, auth = null }) {
             });
     }
 
-    const handleRepost = (id) => {
+    const handleRepost = (e,id) => {
+        e.stopPropagation();
         const post = data?.find(p => p.id === id);
         if (!post) return;
 
@@ -125,7 +131,8 @@ export default function Index({ posts, auth = null }) {
             });
     }
 
-    const handleComment = (id) => {
+    const handleComment = (e,id) => {
+        e.stopPropagation();
         const post = data?.find(p => p.id === id);
         if (!post) return;
         setSelectedPost(post);
@@ -184,9 +191,18 @@ export default function Index({ posts, auth = null }) {
                         </Card.Body>
                         <Card.Footer className="flex justify-between items-center py-3 bg-gray-50 dark:bg-[#0f0f0f]">
                             <div className="flex gap-1">
-                                <button className="p-2 rounded-xl text-gray-400 hover:text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
-                                    <ImageIcon size={20} />
-                                </button>
+                                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                                        <ImageIcon size={20} />
+                                    </button>
+                                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                                        <Smile size={20} />
+                                    </button>
+                                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                                        <MapPin size={20} />
+                                    </button>
+                                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                                        <Calendar size={20} />
+                                    </button>
                             </div>
                             <Button variant="primary" size="sm" icon={SendHorizonal}>Post</Button>
                         </Card.Footer>
@@ -229,19 +245,19 @@ export default function Index({ posts, auth = null }) {
                                         <div className="flex items-center gap-4 sm:gap-8">
                                             <ActionIcon
                                                 icon={Heart}
-                                                onClick={() => handleLike(post?.id)}
+                                                onClick={(e) => handleLike(e,post?.id)}
                                                 count={post.likes_count || 0}
                                                 isActive={post.is_liked}
                                                 activeClassName="text-red-500 bg-red-50 dark:bg-red-500/10"
                                             />
                                             <ActionIcon
                                                 icon={MessageCircle}
-                                                onClick={() => handleComment(post?.id)}
+                                                onClick={(e) => handleComment(e,post?.id)}
                                                 count={post.comments_count || 0}
                                             />
                                             <ActionIcon
                                                 icon={Repeat2}
-                                                onClick={() => handleRepost(post?.id)}
+                                                onClick={(e) => handleRepost(e,post?.id)}
                                                 count={post.reposts_count || 0}
                                                 isActive={post.is_reposted}
                                                 activeClassName="text-green-500 bg-green-50 dark:bg-green-500/10"
@@ -252,7 +268,7 @@ export default function Index({ posts, auth = null }) {
                                         <div className="flex items-center gap-1">
                                             <ActionIcon
                                                 icon={Bookmark}
-                                                onClick={() => handleBookmark(post?.id)}
+                                                onClick={(e) => handleBookmark(e,post?.id)}
                                                 count={post.bookmarks_count || 0}
                                                 isActive={post.is_bookmarked}
                                                 activeClassName="text-blue-500 bg-blue-50 dark:bg-blue-500/10"
