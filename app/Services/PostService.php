@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\PostRepository;
+use Illuminate\Support\Facades\Auth;
 
 class PostService
 {
@@ -25,6 +26,11 @@ class PostService
 
     public function create($data)
     {
+        // thread_id
+        // parent_id
+        // body
+        // user_id
+        $data['user_id'] = Auth::user()->id;
         return $this->postRepository->create($data);
     }
 

@@ -27,7 +27,8 @@ export default function Index({ posts, auth = null }) {
     const [commentModalOpen, setCommentModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const [commentProcessing, setCommentProcessing] = useState(false);
-
+    const [postContent, setPostContent] = useState('');
+    const [isLoadingSubmit,setIsLoadingSubmit] = useState(false);
 
     const handleLike = (e,id) => {
         e.stopPropagation();
@@ -165,6 +166,28 @@ export default function Index({ posts, auth = null }) {
         router.get(`/posts/${id}`);
     }
 
+    const handleSubmitPost = () => {
+        // save post if postContent is not empty
+        setIsLoadingSubmit(true);
+        if(postContent.trim() === '') return;
+        axios.post('/posts', { body: postContent })
+            .then((response) => {
+                setPostContent('');
+                // setData(prev => [response.data, ...prev]);
+                router.get(
+                    route('posts.index'),{
+                        preserveState: true,
+                        preserveScroll: true,
+                    },
+                );
+            })
+            .catch((error) => {
+                console.error("Failed to create post:", error);
+            }).finally(() => {
+                setIsLoadingSubmit(false);
+            });
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title="Posts" />
@@ -182,6 +205,8 @@ export default function Index({ posts, auth = null }) {
                                 </div>
                                 <div className="flex-1">
                                     <TextArea
+                                        value={postContent}
+                                        onChange={(e) => setPostContent(e.target.value)}
                                         placeholder="Share something interesting..."
                                         className="border-none bg-transparent focus:ring-0 px-0 py-2 text-lg shadow-none"
                                         rows={2}
@@ -204,7 +229,7 @@ export default function Index({ posts, auth = null }) {
                                         <Calendar size={20} />
                                     </button>
                             </div>
-                            <Button variant="primary" size="sm" icon={SendHorizonal}>Post</Button>
+                            <Button variant="primary" onClick={handleSubmitPost} processing={isLoadingSubmit} size="sm" icon={SendHorizonal}>Post</Button>
                         </Card.Footer>
                     </Card>
 

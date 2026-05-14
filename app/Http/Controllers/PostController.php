@@ -90,4 +90,10 @@ class PostController extends Controller
             'likes_count' => $comment->likes()->count(),
         ]);
     }
+
+    public function create(Request $request)
+    {
+        $data = $request->all();
+        $comment = $this->postService->create($data);
+    }
 }
