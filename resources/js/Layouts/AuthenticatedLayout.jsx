@@ -210,7 +210,7 @@ export default function AuthenticatedLayout({ header, children }) {
             {/* ── Page content ── */}
             <main className="max-w-7xl mx-auto px-6 lg:px-10 pt-28 pb-20">
                 {header && (
-                    <div className="mb-8">
+                    <div className="mb-4">
                         {header}
                     </div>
                 )}

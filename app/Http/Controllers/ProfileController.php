@@ -94,4 +94,10 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    // upload image profile
+    public function upload(Request $request)
+    {
+       return $this->userPreferenceService->upload($request);
+    }
 }
