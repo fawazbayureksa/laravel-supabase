@@ -22,7 +22,7 @@ class PostController extends Controller
         $posts = $this->postService->getAll();
         return Inertia::render('Posts/index', [
             'posts' => $posts,
-            'auth' => Auth::user()
+            'auth' => Auth::user()->load('profile')
         ]);
     }
 
