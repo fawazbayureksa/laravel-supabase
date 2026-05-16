@@ -37,10 +37,14 @@ class ProfileController extends Controller
 
         if ($user) {
             $user->load('profile');
+            $user->loadCount(['followers', 'following']);
         }
+
+        $posts = $this->postService->getUserPosts($user->id);
 
         return Inertia::render('Profile/index', [
             'user' => $user,
+            'posts' => $posts,
         ]);
     }
     public function edit(Request $request)

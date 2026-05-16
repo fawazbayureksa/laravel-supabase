@@ -97,4 +97,9 @@ class PostService
     {
         return $this->postRepository->likeComment($id);
     }
+
+    public function getUserPosts($userId)
+    {
+        return $this->postRepository->getUserPosts($userId);
+    }
 }
