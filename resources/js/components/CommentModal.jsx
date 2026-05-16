@@ -20,11 +20,35 @@ export default function CommentModal({
     processing
 }) {
     const [body, setBody] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = React.useRef(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeImage = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const handleSubmit = () => {
-        if (!body.trim()) return;
-        onSubmit(body);
+        if (!body.trim() && !selectedImage) return;
+        onSubmit(body, selectedImage);
         setBody('');
+        removeImage();
     };
 
     if (!post) return null;
@@ -86,6 +110,31 @@ export default function CommentModal({
                             rows={3}
                             autoFocus
                         />
+
+                        {/* Image Preview */}
+                        {imagePreview && (
+                            <div className="mt-2 relative rounded-xl overflow-hidden group max-w-sm">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-auto max-h-[200px] object-cover rounded-xl"
+                                />
+                                <button
+                                    onClick={removeImage}
+                                    className="absolute top-2 right-2 p-1 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
                     </div>
                 </div>
             </div>
@@ -93,7 +142,10 @@ export default function CommentModal({
             {/* Footer Action Icons & Post Button */}
             <div className="px-4 py-3 flex items-center justify-between border-t border-gray-100 dark:border-white/5">
                 <div className="flex items-center gap-1 ml-12">
-                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                    <button 
+                        className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all"
+                        onClick={() => fileInputRef.current?.click()}
+                    >
                         <ImageIcon size={20} />
                     </button>
                     <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
@@ -111,7 +163,7 @@ export default function CommentModal({
                     size="sm" 
                     className="px-6 rounded-full font-bold"
                     onClick={handleSubmit}
-                    disabled={!body.trim() || processing}
+                    disabled={(!body.trim() && !selectedImage) || processing}
                 >
                     Post
                 </Button>
