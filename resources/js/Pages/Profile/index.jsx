@@ -24,6 +24,7 @@ import { Tab, Tabs } from '@mui/material';
 export default function Index({ auth = null, user = null, posts = [] }) {
     const [valueTab, setValueTab] = useState('post');
     const [postContent, setPostContent] = useState('');
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
     const handleTabs = (event, newValue) => {
         setValueTab(newValue);
@@ -32,6 +33,27 @@ export default function Index({ auth = null, user = null, posts = [] }) {
     const handleLike = (id) => {
         // Implement like logic or reuse from elsewhere
         axios.post(route('posts.like', id));
+    };
+
+    const handleSubmitPost = () => {
+        if (postContent.trim() === '') return;
+        setIsLoadingSubmit(true);
+        axios.post('/posts', { body: postContent })
+            .then(() => {
+                setPostContent('');
+                router.get(
+                    route('profile.index'), {
+                        preserveState: true,
+                        preserveScroll: true,
+                    },
+                );
+            })
+            .catch((error) => {
+                console.error("Failed to create post:", error);
+            })
+            .finally(() => {
+                setIsLoadingSubmit(false);
+            });
     };
 
     return (
@@ -154,7 +176,14 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                                                 <div className="flex gap-1">
                                                     <ActionIcon icon={ImageIcon} className="w-8 h-8" />
                                                 </div>
-                                                <Button variant="primary" size="sm">Post</Button>
+                                                <Button 
+                                                    variant="primary" 
+                                                    size="sm"
+                                                    onClick={handleSubmitPost}
+                                                    processing={isLoadingSubmit}
+                                                >
+                                                    Post
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
