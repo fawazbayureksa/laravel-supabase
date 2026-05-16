@@ -13,7 +13,7 @@ class PostRepository
         $perPage = 10;
         $userId = Auth::id();
 
-        return Post::with('user.profile')
+        return Post::with(['user.profile', 'media'])
             ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
             ->withExists([
                 'likes as is_liked' => function ($query) use ($userId) {
@@ -35,6 +35,7 @@ class PostRepository
         $userId = Auth::id();
         return Post::with([
             'user.profile',
+            'media',
             'comments' => function ($query) use ($userId) {
                 $query->with('user')
                     ->withCount(['likes', 'replies'])
@@ -70,7 +71,22 @@ class PostRepository
 
     public function create($data)
     {
-        return Post::create($data);
+        $post = Post::create([
+            'user_id' => $data['user_id'],
+            'body' => $data['body'] ?? null,
+            'thread_id' => $data['thread_id'] ?? null,
+            'parent_id' => $data['parent_id'] ?? null,
+            'visibility' => $data['visibility'] ?? 'public',
+        ]);
+
+        if (isset($data['media_path'])) {
+            $post->media()->create([
+                'type' => 'image',
+                'path' => $data['media_path'],
+            ]);
+        }
+
+        return $post->load(['user.profile', 'media']);
     }
 
     public function update($id, $data)
@@ -111,6 +127,7 @@ class PostRepository
             'user_id' => Auth::id(),
             'body' => $data['body'],
             'parent_id' => $data['parent_id'] ?? null,
+            'image' => $data['image'] ?? null,
         ]);
     }
 
@@ -119,7 +136,7 @@ class PostRepository
         $currentUserId = Auth::id();
 
         return Post::query()->where('user_id', '=', $userId)
-            ->with('user.profile')
+            ->with(['user.profile', 'media'])
             ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
             ->withExists([
                 'likes as is_liked' => function ($query) use ($currentUserId) {
