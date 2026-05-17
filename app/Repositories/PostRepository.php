@@ -83,28 +83,28 @@ class PostRepository
         // return Post::find($id)->delete();
     }
 
-    public function like($id)
+    public function like(int|null $id)
     {
         $post = Post::findOrFail($id);
         $post->toggleLike(Auth::user());
         return $post;
     }
 
-    public function bookmark($id)
+    public function bookmark(int|null $id)
     {
         $post = Post::findOrFail($id);
         $post->toggleBookmark(Auth::user());
         return $post;
     }
 
-    public function repost($id)
+    public function repost(int|null $id)
     {
         $post = Post::findOrFail($id);
         $post->toggleRepost(Auth::user());
         return $post;
     }
 
-    public function comment($id, $data)
+    public function comment(int|null $id,object|array $data)
     {
         $post = Post::findOrFail($id);
         return $post->comments()->create([
@@ -112,5 +112,27 @@ class PostRepository
             'body' => $data['body'],
             'parent_id' => $data['parent_id'] ?? null,
         ]);
+    }
+
+    public function getUserPosts(int|null $userId)
+    {
+        $currentUserId = Auth::id();
+
+        return Post::query()->where('user_id', '=', $userId)
+            ->with('user')
+            ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
+            ->withExists([
+                'likes as is_liked' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                },
+                'bookmarks as is_bookmarked' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                },
+                'reposts as is_reposted' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }
