@@ -20,6 +20,9 @@ class Profile extends Model
         'user_id',
         'phone',
         'address',
+        'bio',
+        'profil_picture',
+        'birth_of_date',
     ];
 
     /**
