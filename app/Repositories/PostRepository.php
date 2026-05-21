@@ -13,7 +13,7 @@ class PostRepository
         $perPage = 10;
         $userId = Auth::id();
 
-        return Post::with('user')
+        return Post::with('user.profile')
             ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
             ->withExists([
                 'likes as is_liked' => function ($query) use ($userId) {
@@ -34,7 +34,7 @@ class PostRepository
     {
         $userId = Auth::id();
         return Post::with([
-            'user',
+            'user.profile',
             'comments' => function ($query) use ($userId) {
                 $query->with('user')
                     ->withCount(['likes', 'replies'])
@@ -119,7 +119,7 @@ class PostRepository
         $currentUserId = Auth::id();
 
         return Post::query()->where('user_id', '=', $userId)
-            ->with('user')
+            ->with('user.profile')
             ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
             ->withExists([
                 'likes as is_liked' => function ($query) use ($currentUserId) {

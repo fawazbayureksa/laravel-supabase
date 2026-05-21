@@ -199,8 +199,12 @@ export default function Index({ posts, auth = null }) {
                         <Card.Body>
                             <div className='flex gap-4'>
                                 <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold">
-                                        {userLoggedIn?.name[0] ?? 'U'}
+                                    <div className="w-10 h-10 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold overflow-hidden">
+                                        {userLoggedIn?.profile?.profil_picture ? (
+                                            <img src={userLoggedIn.profile.profil_picture} alt={userLoggedIn.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            userLoggedIn?.name[0] ?? 'U'
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex-1">
@@ -241,8 +245,12 @@ export default function Index({ posts, auth = null }) {
                                     {/* Post Header */}
                                     <div className="flex justify-between items-start mb-4">
                                         <div className="flex gap-3">
-                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg">
-                                                {post.user?.name?.[0] || 'U'}
+                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden">
+                                                {post.user?.profile?.profil_picture ? (
+                                                    <img src={post.user.profile.profil_picture} alt={post.user.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    post.user?.name?.[0] || 'U'
+                                                )}
                                             </div>
                                             <div>
                                                 <h4 className="font-bold text-gray-900 dark:text-white leading-tight">
