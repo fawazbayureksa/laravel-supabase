@@ -98,9 +98,13 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="w-px h-5 bg-gray-200 dark:bg-white/10" />
 
                         {/* Avatar + name */}
-                        <Link href={route('profile.edit')} className="flex items-center gap-2.5 group">
-                            <div className="w-8 h-8 rounded-lg bg-[#1F6F5F]/10 text-[#1F6F5F] flex items-center justify-center font-bold text-sm border border-[#1F6F5F]/15 group-hover:border-[#1F6F5F]/35 transition-colors">
-                                {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                        <Link href={route('profile.index')} className="flex items-center gap-2.5 group">
+                            <div className="w-8 h-8 rounded-lg bg-[#1F6F5F]/10 text-[#1F6F5F] flex items-center justify-center font-bold text-sm border border-[#1F6F5F]/15 group-hover:border-[#1F6F5F]/35 transition-all overflow-hidden">
+                                {user?.profile?.profil_picture ? (
+                                    <img src={user.profile.profil_picture} alt={user.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    user?.name?.charAt(0)?.toUpperCase() || 'A'
+                                )}
                             </div>
                             <div className="hidden lg:block leading-none">
                                 {/* <p className="text-sm font-semibold text-[#1a1a1a] dark:text-white">{user?.name}</p> */}

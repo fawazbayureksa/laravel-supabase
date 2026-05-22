@@ -194,8 +194,12 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                                             posts.map((post) => (
                                                 <div key={post.id} className="p-4 rounded-2xl border border-gray-50 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/2 transition-all">
                                                     <div className="flex gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0">
-                                                            {user?.name?.[0]}
+                                                        <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
+                                                            {user?.profile?.profil_picture ? (
+                                                                <img src={user.profile.profil_picture} alt={user.name} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                user?.name?.[0] || 'U'
+                                                            )}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center justify-between">
