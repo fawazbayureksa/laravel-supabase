@@ -20,9 +20,10 @@ class PostController extends Controller
     public function index()
     {
         $posts = $this->postService->getAll();
+
         return Inertia::render('Posts/index', [
             'posts' => $posts,
-            'auth' => Auth::user()->load('profile')
+            'auth' => Auth::user()?->load('profile') ?? null
         ]);
     }
 

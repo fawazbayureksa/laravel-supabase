@@ -192,7 +192,7 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                                     <div className="space-y-4">
                                         {posts.length > 0 ? (
                                             posts.map((post) => (
-                                                <div key={post.id} className="p-4 rounded-2xl border border-gray-50 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/2 transition-all">
+                                                <div key={post.id} className="p-4 rounded-2xl border border-gray-50 dark:border-white/5 dark:hover:bg-white/2 transition-all">
                                                     <div className="flex gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
                                                             {user?.profile?.profil_picture ? (
