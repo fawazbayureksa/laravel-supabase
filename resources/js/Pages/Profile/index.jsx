@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -22,6 +22,10 @@ import {
 import { Tab, Tabs } from '@mui/material';
 
 export default function Index({ auth = null, user = null, posts = [] }) {
+    const [postsData, setPostsData] = useState(posts);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [commentModalOpen, setCommentModalOpen] = useState(false);
+    const [commentProcessing, setCommentProcessing] = useState(false);
     const [valueTab, setValueTab] = useState('post');
     const [postContent, setPostContent] = useState('');
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
@@ -30,9 +34,139 @@ export default function Index({ auth = null, user = null, posts = [] }) {
         setValueTab(newValue);
     };
 
-    const handleLike = (id) => {
-        // Implement like logic or reuse from elsewhere
-        axios.post(route('posts.like', id));
+    const handleDetailPost = (id) => {
+        router.get(`/posts/${id}`);
+    };
+
+    const handleLike = (e, id) => {
+        e.stopPropagation();
+        const post = postsData?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsLiked = !post.is_liked;
+        const delta = newIsLiked ? 1 : -1;
+        const newLikesCount = Math.max(0, (post.likes_count || 0) + delta);
+
+        setPostsData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_liked: newIsLiked, likes_count: newLikesCount }
+                : item
+        ));
+
+        axios.post(route('posts.like', id))
+            .then((response) => {
+                setPostsData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_liked: response.data.is_liked,
+                            likes_count: response.data.likes_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to like post:", error);
+                setPostsData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    };
+
+    const handleBookmark = (e, id) => {
+        e.stopPropagation();
+        const post = postsData?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsBookmarked = !post.is_bookmarked;
+        const delta = newIsBookmarked ? 1 : -1;
+        const newBookmarksCount = Math.max(0, (post.bookmarks_count || 0) + delta);
+
+        setPostsData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_bookmarked: newIsBookmarked, bookmarks_count: newBookmarksCount }
+                : item
+        ));
+
+        axios.post(`/posts/bookmark/${id}`)
+            .then((response) => {
+                setPostsData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_bookmarked: response.data.is_bookmarked,
+                            bookmarks_count: response.data.bookmarks_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to bookmark post:", error);
+                setPostsData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    };
+
+    const handleRepost = (e, id) => {
+        e.stopPropagation();
+        const post = postsData?.find(p => p.id === id);
+        if (!post) return;
+
+        const originalPost = { ...post };
+        const newIsReposted = !post.is_reposted;
+        const delta = newIsReposted ? 1 : -1;
+        const newRepostsCount = Math.max(0, (post.reposts_count || 0) + delta);
+
+        setPostsData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_reposted: newIsReposted, reposts_count: newRepostsCount }
+                : item
+        ));
+
+        axios.post(`/posts/repost/${id}`)
+            .then((response) => {
+                setPostsData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_reposted: response.data.is_reposted,
+                            reposts_count: response.data.reposts_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to repost:", error);
+                setPostsData(prev => prev?.map(item => item.id === id ? originalPost : item));
+            });
+    };
+
+    const handleComment = (e, id) => {
+        e.stopPropagation();
+        const post = postsData?.find(p => p.id === id);
+        if (!post) return;
+        setSelectedPost(post);
+        setCommentModalOpen(true);
+    };
+
+    const submitComment = (body) => {
+        if (!selectedPost) return;
+        setCommentProcessing(true);
+
+        axios.post(`/posts/comment/${selectedPost.id}`, { body })
+            .then((response) => {
+                setPostsData(prev => prev?.map(item =>
+                    item.id === selectedPost.id
+                        ? { ...item, comments_count: response.data.comments_count }
+                        : item
+                ));
+                setCommentModalOpen(false);
+            })
+            .catch((error) => {
+                console.error("Failed to comment:", error);
+            })
+            .finally(() => {
+                setCommentProcessing(false);
+            });
     };
 
     const handleSubmitPost = () => {
@@ -190,9 +324,13 @@ export default function Index({ auth = null, user = null, posts = [] }) {
 
                                     {/* Posts Feed */}
                                     <div className="space-y-4">
-                                        {posts.length > 0 ? (
-                                            posts.map((post) => (
-                                                <div key={post.id} className="p-4 rounded-2xl border border-gray-50 dark:border-white/5 dark:hover:bg-white/2 transition-all">
+                                        {postsData.length > 0 ? (
+                                            postsData.map((post) => (
+                                                <div 
+                                                    key={post.id} 
+                                                    onClick={() => handleDetailPost(post.id)}
+                                                    className="p-4 border-b border-gray-50 dark:border-white/5 dark:hover:bg-white/2 transition-all cursor-pointer"
+                                                >
                                                     <div className="flex gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
                                                             {user?.profile?.profil_picture ? (
@@ -221,11 +359,26 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                                                                     icon={Heart} 
                                                                     count={post.likes_count} 
                                                                     isActive={post.is_liked}
-                                                                    onClick={() => handleLike(post.id)}
+                                                                    onClick={(e) => handleLike(e, post.id)}
                                                                 />
-                                                                <ActionIcon icon={MessageCircle} count={post.comments_count} />
-                                                                <ActionIcon icon={Repeat2} count={post.reposts_count} />
-                                                                <ActionIcon icon={Share2} />
+                                                                <ActionIcon 
+                                                                    icon={MessageCircle} 
+                                                                    count={post.comments_count} 
+                                                                    onClick={(e) => handleComment(e, post.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={Repeat2} 
+                                                                    count={post.reposts_count} 
+                                                                    isActive={post.is_reposted}
+                                                                    onClick={(e) => handleRepost(e, post.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={Bookmark} 
+                                                                    count={post.bookmarks_count} 
+                                                                    isActive={post.is_bookmarked}
+                                                                    onClick={(e) => handleBookmark(e, post.id)}
+                                                                />
+                                                                <ActionIcon icon={Share2} onClick={(e) => { e.stopPropagation(); /* share logic */ }} />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -243,6 +396,15 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                     </Card>
                 </div>
             </div>
+            
+            <CommentModal 
+                show={commentModalOpen}
+                onClose={() => setCommentModalOpen(false)}
+                onSubmit={submitComment}
+                post={selectedPost}
+                user={auth?.user}
+                processing={commentProcessing}
+            />
         </AuthenticatedLayout>
     );
 }
