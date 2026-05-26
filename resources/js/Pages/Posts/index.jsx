@@ -16,7 +16,8 @@ import {
     Image as ImageIcon,
     Smile,
     MapPin,
-    Calendar
+    Calendar,
+    X
 } from 'lucide-react';
 import axios from 'axios';
 import CommentModal from '@/Components/CommentModal';
@@ -29,6 +30,9 @@ export default function Index({ posts, auth = null }) {
     const [commentProcessing, setCommentProcessing] = useState(false);
     const [postContent, setPostContent] = useState('');
     const [isLoadingSubmit,setIsLoadingSubmit] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = React.useRef(null);
 
     const handleLike = (e,id) => {
         e.stopPropagation();
@@ -140,11 +144,21 @@ export default function Index({ posts, auth = null }) {
         setCommentModalOpen(true);
     }
 
-    const submitComment = (body) => {
+    const submitComment = (body, image = null) => {
         if (!selectedPost) return;
         setCommentProcessing(true);
 
-        axios.post(`/posts/comment/${selectedPost.id}`, { body })
+        const formData = new FormData();
+        formData.append('body', body);
+        if (image) {
+            formData.append('image', image);
+        }
+
+        axios.post(`/posts/comment/${selectedPost.id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then((response) => {
                 setData(prev => prev?.map(item =>
                     item.id === selectedPost.id
@@ -166,16 +180,48 @@ export default function Index({ posts, auth = null }) {
         router.get(`/posts/${id}`);
     }
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeImage = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const handleSubmitPost = () => {
-        // save post if postContent is not empty
+        if (postContent.trim() === '' && !selectedImage) return;
+
         setIsLoadingSubmit(true);
-        if(postContent.trim() === '') return;
-        axios.post('/posts', { body: postContent })
+
+        const formData = new FormData();
+        formData.append('body', postContent);
+        if (selectedImage) {
+            formData.append('image', selectedImage);
+        }
+
+        axios.post('/posts', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((response) => {
                 setPostContent('');
-                // setData(prev => [response.data, ...prev]);
+                removeImage();
+                // Refresh data or add new post to state
                 router.get(
-                    route('posts.index'),{
+                    route('posts.index'), {
                         preserveState: true,
                         preserveScroll: true,
                     },
@@ -217,10 +263,38 @@ export default function Index({ posts, auth = null }) {
                                     />
                                 </div>
                             </div>
+
+                            {/* Image Preview */}
+                            {imagePreview && (
+                                <div className="mt-4 relative rounded-xl overflow-hidden group">
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="w-full h-auto max-h-[400px] object-cover rounded-xl"
+                                    />
+                                    <button
+                                        onClick={removeImage}
+                                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                            )}
+
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                accept="image/*"
+                                className="hidden"
+                            />
                         </Card.Body>
                         <Card.Footer className="flex justify-between items-center py-3 bg-gray-50 dark:bg-[#0f0f0f]">
                             <div className="flex gap-1">
-                                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
+                                    <button
+                                        className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
                                         <ImageIcon size={20} />
                                     </button>
                                     <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
@@ -272,6 +346,23 @@ export default function Index({ posts, auth = null }) {
                                             {post.body}
                                         </p>
                                     </div>
+
+                                    {/* Post Media */}
+                                    {post.media && post.media.length > 0 && (
+                                        <div className="mb-4 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5">
+                                            {post.media.map((media) => (
+                                                <div key={media.id}>
+                                                    {media.type === 'image' && (
+                                                        <img
+                                                            src={media.path}
+                                                            alt={media.alt_text || 'Post image'}
+                                                            className="w-full h-auto object-cover max-h-[500px]"
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
 
                                     {/* Post Actions */}
                                     <div className="flex justify-between items-center pt-2 mt-4 border-t border-gray-50 dark:border-white/4">

@@ -139,13 +139,24 @@ export default function Show({ post, auth = null }) {
         setCommentModalOpen(true);
     }
 
-    const submitComment = (body) => {
+    const submitComment = (body, image = null) => {
         if (!selectedPost) return;
         setProcessing(true);
 
-        axios.post(`/posts/comment/${data.id}`, {
-            body,
-            parent_id: selectedPost.id === data.id ? null : selectedPost.id
+        const formData = new FormData();
+        formData.append('body', body);
+        const parentId = selectedPost.id === data.id ? null : selectedPost.id;
+        if (parentId) {
+            formData.append('parent_id', parentId);
+        }
+        if (image) {
+            formData.append('image', image);
+        }
+
+        axios.post(`/posts/comment/${data.id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         })
             .then((response) => {
                 // If it's a direct reply to the post, add to the main list
@@ -228,11 +239,15 @@ export default function Show({ post, auth = null }) {
                                 </p>
                             </div>
 
-                            {/* Images if any */}
-                            {data.images?.length > 0 && (
+                             {/* Media if any */}
+                            {data.media?.length > 0 && (
                                 <div className="mb-6 grid grid-cols-1 gap-2 rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5">
-                                    {data.images.map((img, i) => (
-                                        <img key={i} src={img.url} className="w-full object-cover max-h-[500px]" alt="" />
+                                    {data.media.map((item) => (
+                                        <div key={item.id}>
+                                            {item.type === 'image' && (
+                                                <img src={item.path} className="w-full object-cover max-h-[500px]" alt="" />
+                                            )}
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -313,6 +328,17 @@ export default function Show({ post, auth = null }) {
                                                     <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap text-[15px]">
                                                         {comment.body}
                                                     </p>
+
+                                                    {/* Comment Image */}
+                                                    {comment.image && (
+                                                        <div className="mt-3 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 max-w-sm">
+                                                            <img 
+                                                                src={comment.image} 
+                                                                className="w-full h-auto object-cover max-h-[300px]" 
+                                                                alt="Comment attachment" 
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Reply Actions */}
