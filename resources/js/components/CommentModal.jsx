@@ -78,6 +78,7 @@ export default function CommentModal({
 
     if (!post) return null;
 
+
     return (
         <Modal show={show} onClose={onClose} maxWidth="xl">
             {/* Header */}
@@ -127,9 +128,13 @@ export default function CommentModal({
 
                 {/* Reply Section */}
                 <div className="flex gap-3 mt-4">
-                    <div className="w-12 h-12 rounded-full bg-[#1F6F5F]/10 flex items-center justify-center text-[#1F6F5F] font-bold text-lg">
-                        {user?.name?.[0] || 'U'}
-                    </div>
+                     <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden">
+                            {user?.profile?.profil_picture ? (
+                                <img src={user.profile.profil_picture} alt={user.name} className="w-full h-full object-cover" />
+                            ) : (
+                                user?.name?.[0] || 'U'
+                            )}
+                        </div>
                     <div className="flex-1">
                         <TextArea
                             ref={textareaRef}
