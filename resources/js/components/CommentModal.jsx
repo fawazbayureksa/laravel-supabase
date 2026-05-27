@@ -73,8 +73,12 @@ export default function CommentModal({
                 {/* Parent Post */}
                 <div className="flex gap-3 mt-2">
                     <div className="flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                            {post.user?.name?.[0] || 'U'}
+                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden">
+                            {post.user?.profile?.profil_picture ? (
+                                <img src={post.user.profile.profil_picture} alt={post.user.name} className="w-full h-full object-cover" />
+                            ) : (
+                                post.user?.name?.[0] || 'U'
+                            )}
                         </div>
                         <div className="w-0.5 flex-1 bg-gray-200 dark:bg-white/10 mt-2 mb-1 rounded-full" />
                     </div>
