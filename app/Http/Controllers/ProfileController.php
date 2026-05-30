@@ -43,12 +43,14 @@ class ProfileController extends Controller
         $posts = $this->postService->getUserPosts($user->id);
         $reposts = $this->postService->getUserReposts($user->id);
         $replies = $this->postService->getUserReplies($user->id);
+        $media = $this->postService->getUserMedia($user->id);
 
         return Inertia::render('Profile/index', [
             'user' => $user,
             'posts' => $posts,
             'reposts' => $reposts,
             'replies' => $replies,
+            'media' => $media,
         ]);
     }
     public function edit(Request $request)
