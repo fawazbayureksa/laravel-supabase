@@ -124,4 +124,10 @@ class PostController extends Controller
 
         return response()->json($post);
     }
+
+    public function getUserReplies($id)
+    {
+        $replies = $this->postService->getUserReplies($id);
+        return response()->json($replies);
+    }
 }

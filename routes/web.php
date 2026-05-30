@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('comments/like/{id}', [PostController::class, 'likeComment'])->name('comments.like');
 
     Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('posts/user/{id}/replies', [PostController::class, 'getUserReplies'])->name('posts.user.replies');
 });
 
 require __DIR__ . '/auth.php';

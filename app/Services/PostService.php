@@ -107,4 +107,9 @@ class PostService
     {
         return $this->postRepository->getUserReposts($userId);
     }
+
+    public function getUserReplies($userId)
+    {
+        return $this->postRepository->getUserReplies($userId);
+    }
 }
