@@ -41,10 +41,12 @@ class ProfileController extends Controller
         }
 
         $posts = $this->postService->getUserPosts($user->id);
+        $reposts = $this->postService->getUserReposts($user->id);
 
         return Inertia::render('Profile/index', [
             'user' => $user,
             'posts' => $posts,
+            'reposts' => $reposts,
         ]);
     }
     public function edit(Request $request)
@@ -98,6 +100,6 @@ class ProfileController extends Controller
     // upload image profile
     public function upload(Request $request)
     {
-       return $this->userPreferenceService->upload($request);
+        return $this->userPreferenceService->upload($request);
     }
 }
