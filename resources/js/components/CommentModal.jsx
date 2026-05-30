@@ -10,6 +10,9 @@ import {
 } from 'lucide-react';
 import Button from './Button';
 import TextArea from './TextArea';
+import EmojiPicker from './EmojiPicker';
+
+
 
 export default function CommentModal({
     show,
@@ -23,6 +26,28 @@ export default function CommentModal({
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = React.useRef(null);
+    const textareaRef = React.useRef(null);
+
+    const insertEmoji = (emoji) => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const before = text.substring(0, start);
+            const after = text.substring(end, text.length);
+            const newContent = before + emoji + after;
+            setBody(newContent);
+            
+            setTimeout(() => {
+                textarea.focus();
+                const newCursorPos = start + emoji.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+            }, 0);
+        } else {
+            setBody(prev => prev + emoji);
+        }
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -107,6 +132,7 @@ export default function CommentModal({
                     </div>
                     <div className="flex-1">
                         <TextArea
+                            ref={textareaRef}
                             value={body}
                             onChange={(e) => setBody(e.target.value)}
                             placeholder={`Reply to ${post.user?.name}...`}
@@ -152,12 +178,7 @@ export default function CommentModal({
                     >
                         <ImageIcon size={20} />
                     </button>
-                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
-                        <Smile size={20} />
-                    </button>
-                    <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
-                        <MapPin size={20} />
-                    </button>
+                    <EmojiPicker onSelectEmoji={insertEmoji} placement="top" />
                     <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
                         <Calendar size={20} />
                     </button>
