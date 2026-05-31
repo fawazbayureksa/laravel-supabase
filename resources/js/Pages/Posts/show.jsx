@@ -24,7 +24,7 @@ export default function Show({ post, auth = null }) {
     const [commentModalOpen, setCommentModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const [processing, setProcessing] = useState(false);
-
+    const [userLoggedIn, setUserLoggedIn] = useState(auth);
     const handleLike = (id) => {
         const originalPost = { ...data };
         const newIsLiked = !data.is_liked;
@@ -393,7 +393,7 @@ export default function Show({ post, auth = null }) {
                     setSelectedPost(null);
                 }}
                 post={selectedPost}
-                user={auth?.user}
+                user={userLoggedIn}
                 onSubmit={submitComment}
                 processing={processing}
             />
