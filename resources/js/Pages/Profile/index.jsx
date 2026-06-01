@@ -21,14 +21,21 @@ import {
 } from 'lucide-react';
 import { Tab, Tabs } from '@mui/material';
 
-export default function Index({ auth = null, user = null, posts = [] }) {
+export default function Index({ auth = null, user = null, posts = [], reposts = [] }) {
     const [postsData, setPostsData] = useState(posts);
+    const [repostsData, setRepostsData] = useState(reposts);
     const [selectedPost, setSelectedPost] = useState(null);
     const [commentModalOpen, setCommentModalOpen] = useState(false);
     const [commentProcessing, setCommentProcessing] = useState(false);
     const [valueTab, setValueTab] = useState('post');
+    const [postContent,setPostContent] = useState('');
     const [postContent, setPostContent] = useState('');
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+
+    useEffect(() => {
+        setPostsData(posts);
+        setRepostsData(reposts);
+    }, [posts, reposts]);
 
     const handleTabs = (event, newValue) => {
         setValueTab(newValue);
@@ -387,6 +394,73 @@ export default function Index({ auth = null, user = null, posts = [] }) {
                                         ) : (
                                             <div className="py-20 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-3xl">
                                                 <p className="text-gray-400 font-medium">No posts yet</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            {valueTab === 'repost' && (
+                                <div className='space-y-6'>
+                                    <div className="space-y-4">
+                                        {repostsData.length > 0 ? (
+                                            repostsData.map((repost) => (
+                                                <div key={repost.id} onClick={() => handleDetailPost(repost?.post?.id)} className="p-4 border-b border-gray-50 dark:border-white/5 dark:hover:bg-white/2 transition-all cursor-pointer">
+                                                    <div className="flex gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
+                                                            {repost?.post?.user?.profile?.profil_picture ? (
+                                                                <img src={repost?.post?.user?.profile?.profil_picture} alt={repost?.post?.user?.name} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                repost?.post?.user?.name?.[0] || 'U'
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-1.5 overflow-hidden">
+                                                                    <span className="font-bold text-gray-900 dark:text-white truncate">{repost?.post?.user?.name}</span>
+                                                                    <span className="text-gray-400 text-sm">@{repost?.post?.user?.username}</span>
+                                                                    <span className="text-gray-300">•</span>
+                                                                    <span className="text-gray-400 text-sm whitespace-nowrap">{new Date(repost?.post?.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                                                                </div>
+                                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                                                    <MoreHorizontal size={18} />
+                                                                </button>
+                                                            </div>
+                                                            <p className="mt-1 text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
+                                                                {repost?.post?.body}
+                                                            </p>
+                                                            <div className="flex justify-between items-center mt-4 max-w-sm">
+                                                                <ActionIcon 
+                                                                    icon={Heart} 
+                                                                    count={repost?.post?.likes_count} 
+                                                                    isActive={repost?.post?.is_liked} 
+                                                                    onClick={(e) => handleLike(e, repost?.post?.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={MessageCircle} 
+                                                                    count={repost?.post?.comments_count} 
+                                                                    onClick={(e) => handleComment(e, repost?.post?.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={Repeat2} 
+                                                                    count={repost?.post?.reposts_count} 
+                                                                    isActive={repost?.post?.is_reposted} 
+                                                                    onClick={(e) => handleRepost(e, repost?.post?.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={Bookmark} 
+                                                                    count={repost?.post?.bookmarks_count} 
+                                                                    isActive={repost?.post?.is_bookmarked} 
+                                                                    onClick={(e) => handleBookmark(e, repost?.post?.id)}
+                                                                />
+                                                                <ActionIcon icon={Share2} onClick={(e) => { e.stopPropagation(); /* share logic */ }} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="py-20 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-3xl">
+                                                <p className="text-gray-400 font-medium">No reposts yet</p>
                                             </div>
                                         )}
                                     </div>
