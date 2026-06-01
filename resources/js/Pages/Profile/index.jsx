@@ -29,6 +29,8 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     const [commentProcessing, setCommentProcessing] = useState(false);
     const [valueTab, setValueTab] = useState('post');
     const [postContent,setPostContent] = useState('');
+    const [postContent, setPostContent] = useState('');
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
     useEffect(() => {
         setPostsData(posts);
@@ -174,6 +176,27 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
             });
     };
 
+    const handleSubmitPost = () => {
+        if (postContent.trim() === '') return;
+        setIsLoadingSubmit(true);
+        axios.post('/posts', { body: postContent })
+            .then(() => {
+                setPostContent('');
+                router.get(
+                    route('profile.index'), {
+                        preserveState: true,
+                        preserveScroll: true,
+                    },
+                );
+            })
+            .catch((error) => {
+                console.error("Failed to create post:", error);
+            })
+            .finally(() => {
+                setIsLoadingSubmit(false);
+            });
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title={`${user?.name || 'Profile'}`} />
@@ -294,7 +317,14 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
                                                 <div className="flex gap-1">
                                                     <ActionIcon icon={ImageIcon} className="w-8 h-8" />
                                                 </div>
-                                                <Button variant="primary" size="sm">Post</Button>
+                                                <Button 
+                                                    variant="primary" 
+                                                    size="sm"
+                                                    onClick={handleSubmitPost}
+                                                    processing={isLoadingSubmit}
+                                                >
+                                                    Post
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
