@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Repost;
 use Illuminate\Support\Facades\Auth;
 
 class PostRepository
@@ -120,7 +121,7 @@ class PostRepository
         return $post;
     }
 
-    public function comment(int|null $id,object|array $data)
+    public function comment(int|null $id, object|array $data)
     {
         $post = Post::findOrFail($id);
         return $post->comments()->create([
@@ -147,6 +148,33 @@ class PostRepository
                 },
                 'reposts as is_reposted' => function ($query) use ($currentUserId) {
                     $query->where('user_id', '=', $currentUserId);
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    public function getUserReposts(int|null $userId)
+    {
+        $currentUserId = Auth::id();
+        return Repost::query()->where('user_id', '=', $userId)
+            ->whereHas('post')
+            ->with([
+                'post.user.profile',
+                'post.media',
+                'post' => function ($query) use ($currentUserId) {
+                    $query->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
+                        ->withExists([
+                            'likes as is_liked' => function ($q) use ($currentUserId) {
+                                $q->where('user_id', '=', $currentUserId);
+                            },
+                            'bookmarks as is_bookmarked' => function ($q) use ($currentUserId) {
+                                $q->where('user_id', '=', $currentUserId);
+                            },
+                            'reposts as is_reposted' => function ($q) use ($currentUserId) {
+                                $q->where('user_id', '=', $currentUserId);
+                            }
+                        ]);
                 }
             ])
             ->orderBy('created_at', 'desc')

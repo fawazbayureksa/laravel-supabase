@@ -28,4 +28,8 @@ class Post extends Model
     {
         return $this->hasMany(PostMedia::class);
     }
+    public function reposts()
+    {
+        return $this->hasMany(Repost::class);
+    }
 }
