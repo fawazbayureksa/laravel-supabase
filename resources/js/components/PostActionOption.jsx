@@ -37,7 +37,7 @@ export default function PostActionMenu({ post }) {
         >
             <Menu.Button
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors focus:outline-none"
+                className="flex items-center justify-center p-0 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors focus:outline-none"
             >
                 <Ellipsis size={20} />
             </Menu.Button>
