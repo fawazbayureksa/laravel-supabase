@@ -21,9 +21,10 @@ import {
 } from 'lucide-react';
 import { Tab, Tabs } from '@mui/material';
 
-export default function Index({ auth = null, user = null, posts = [], reposts = [] }) {
+export default function Index({ auth = null, user = null, posts = [], reposts = [], replies = [] }) {
     const [postsData, setPostsData] = useState(posts);
     const [repostsData, setRepostsData] = useState(reposts);
+    const [repliesData, setRepliesData] = useState(replies);
     const [selectedPost, setSelectedPost] = useState(null);
     const [commentModalOpen, setCommentModalOpen] = useState(false);
     const [commentProcessing, setCommentProcessing] = useState(false);
@@ -35,7 +36,8 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     useEffect(() => {
         setPostsData(posts);
         setRepostsData(reposts);
-    }, [posts, reposts]);
+        setRepliesData(replies);
+    }, [posts, reposts, replies]);
 
     const handleTabs = (event, newValue) => {
         setValueTab(newValue);
@@ -174,6 +176,47 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
             .finally(() => {
                 setCommentProcessing(false);
             });
+    };
+
+    const handleLikeComment = (e, id) => {
+        e.stopPropagation();
+        const reply = repliesData?.find(r => r.id === id);
+        if (!reply) return;
+
+        const originalReply = { ...reply };
+        const newIsLiked = !reply.is_liked;
+        const delta = newIsLiked ? 1 : -1;
+        const newLikesCount = Math.max(0, (reply.likes_count || 0) + delta);
+
+        setRepliesData(prev => prev?.map(item =>
+            item.id === id
+                ? { ...item, is_liked: newIsLiked, likes_count: newLikesCount }
+                : item
+        ));
+
+        axios.post(`/comments/like/${id}`)
+            .then((response) => {
+                setRepliesData(prev => prev?.map(item =>
+                    item.id === id
+                        ? {
+                            ...item,
+                            is_liked: response.data.is_liked,
+                            likes_count: response.data.likes_count
+                        }
+                        : item
+                ));
+            })
+            .catch((error) => {
+                console.error("Failed to like comment:", error);
+                setRepliesData(prev => prev?.map(item => item.id === id ? originalReply : item));
+            });
+    };
+
+    const handleReplyClick = (e, post) => {
+        e.stopPropagation();
+        if (!post) return;
+        setSelectedPost(post);
+        setCommentModalOpen(true);
     };
 
     const handleSubmitPost = () => {
@@ -394,6 +437,69 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
                                         ) : (
                                             <div className="py-20 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-3xl">
                                                 <p className="text-gray-400 font-medium">No posts yet</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            {valueTab === 'replies' && (
+                                <div className='space-y-6'>
+                                    <div className="space-y-4">
+                                        {repliesData.length > 0 ? (
+                                            repliesData.map((reply) => (
+                                                <div key={reply.id} onClick={() => handleDetailPost(reply?.post?.id)} className="p-4 border-b border-gray-50 dark:border-white/5 dark:hover:bg-white/2 transition-all cursor-pointer">
+                                                    <div className="flex gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-[#1F6F5F] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
+                                                            {user?.profile?.profil_picture ? (
+                                                                <img src={user.profile.profil_picture} alt={user.name} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                user?.name?.[0] || 'U'
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-1.5 overflow-hidden">
+                                                                    <span className="font-bold text-gray-900 dark:text-white truncate">{user?.name}</span>
+                                                                    <span className="text-gray-400 text-sm">@{user?.username}</span>
+                                                                    <span className="text-gray-300">•</span>
+                                                                    <span className="text-gray-400 text-sm whitespace-nowrap">{new Date(reply.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                                                                </div>
+                                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                                                    <MoreHorizontal size={18} />
+                                                                </button>
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                                                Replying to <span className="text-[#1F6F5F] font-semibold">@{reply?.post?.user?.username || 'anonymous'}</span>
+                                                            </div>
+                                                            <p className="mt-2 text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
+                                                                {reply.body}
+                                                            </p>
+                                                            {reply.image && (
+                                                                <div className="mt-3 rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 max-w-sm">
+                                                                    <img src={reply.image} className="w-full h-auto object-cover max-h-[300px]" alt="Attachment" />
+                                                                </div>
+                                                            )}
+                                                            <div className="flex justify-between items-center mt-4 max-w-sm">
+                                                                <ActionIcon 
+                                                                    icon={Heart} 
+                                                                    count={reply.likes_count} 
+                                                                    isActive={reply.is_liked} 
+                                                                    onClick={(e) => handleLikeComment(e, reply.id)}
+                                                                />
+                                                                <ActionIcon 
+                                                                    icon={MessageCircle} 
+                                                                    count={reply.replies_count} 
+                                                                    onClick={(e) => handleReplyClick(e, reply?.post)}
+                                                                />
+                                                                <ActionIcon icon={Share2} onClick={(e) => { e.stopPropagation(); /* share logic */ }} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="py-20 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-3xl">
+                                                <p className="text-gray-400 font-medium">No replies yet</p>
                                             </div>
                                         )}
                                     </div>
