@@ -180,4 +180,26 @@ class PostRepository
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+    public function getUserReplies(int|null $userId)
+    {
+        $currentUserId = Auth::id();
+        return Comment::query()->where('user_id', '=', $userId)
+            ->whereHas('post')
+            ->with([
+                'post.user.profile',
+                'post.media',
+                'user.profile',
+                'post'
+            ])
+            ->withCount(['likes', 'replies'])
+            ->withExists([
+                'likes as is_liked' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }
+
