@@ -201,5 +201,27 @@ class PostRepository
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+    public function getUserMedia(int|null $userId)
+    {
+        $currentUserId = Auth::id();
+        return Post::query()->where('user_id', '=', $userId)
+            ->whereHas('media')
+            ->with(['user.profile', 'media'])
+            ->withCount(['likes', 'comments', 'reposts', 'bookmarks'])
+            ->withExists([
+                'likes as is_liked' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                },
+                'bookmarks as is_bookmarked' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                },
+                'reposts as is_reposted' => function ($query) use ($currentUserId) {
+                    $query->where('user_id', '=', $currentUserId);
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }
 

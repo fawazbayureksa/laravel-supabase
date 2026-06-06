@@ -112,4 +112,9 @@ class PostService
     {
         return $this->postRepository->getUserReplies($userId);
     }
+
+    public function getUserMedia($userId)
+    {
+        return $this->postRepository->getUserMedia($userId);
+    }
 }
