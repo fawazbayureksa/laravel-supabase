@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import Card from '@/Components/Card';
-import Button from '@/Components/Button';
-import ActionIcon from '@/Components/ActionIcon';
-import TextArea from '@/Components/TextArea';
-import CommentModal from '@/Components/CommentModal';
+import Card from '@/components/Card';
+import Button from '@/components/Button';
+import ActionIcon from '@/components/ActionIcon';
+import TextArea from '@/components/TextArea';
+import CommentModal from '@/components/CommentModal';
 import {
     ArrowLeft,
     Heart,

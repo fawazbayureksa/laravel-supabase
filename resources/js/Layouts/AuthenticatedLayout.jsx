@@ -14,7 +14,7 @@ import {
     LogIn,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import ActionIcon from '@/Components/ActionIcon';
+import ActionIcon from '@/components/ActionIcon';
 import { route } from 'ziggy-js';
 
 export default function AuthenticatedLayout({ header, children }) {

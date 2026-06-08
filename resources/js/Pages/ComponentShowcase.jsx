@@ -1,11 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import Button from '@/Components/Button';
-import Input from '@/Components/Input';
-import TextArea from '@/Components/TextArea';
-import FileUpload from '@/Components/FileUpload';
-import ActionIcon from '@/Components/ActionIcon';
-import Card from '@/Components/Card';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import TextArea from '@/components/TextArea';
+import FileUpload from '@/components/FileUpload';
+import ActionIcon from '@/components/ActionIcon';
+import Card from '@/components/Card';
 import { Heart, MessageCircle, Share2, Bookmark, Mail, Lock, User, Send } from 'lucide-react';
 import { useState } from 'react';
 
