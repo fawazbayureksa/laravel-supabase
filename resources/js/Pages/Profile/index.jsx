@@ -31,7 +31,6 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     const [commentProcessing, setCommentProcessing] = useState(false);
     const [valueTab, setValueTab] = useState('post');
     const [postContent,setPostContent] = useState('');
-    const [postContent, setPostContent] = useState('');
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
     useEffect(() => {
