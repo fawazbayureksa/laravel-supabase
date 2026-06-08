@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,6 +48,10 @@ class PostService
     public function like($id)
     {
         return $this->postRepository->like($id);
+    }
+    public function likeByUser(int $id, User $user)
+    {
+        return $this->postRepository->likeByUser($id, $user);
     }
 
     public function bookmark($id)
@@ -116,5 +121,9 @@ class PostService
     public function getUserMedia($userId)
     {
         return $this->postRepository->getUserMedia($userId);
+    }
+    public function postLike($id)
+    {
+        return $this->postRepository->like($id);
     }
 }
