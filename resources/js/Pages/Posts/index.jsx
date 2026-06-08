@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
-import Button from "@/components/button";
+import Button from "@/components/Button";
 import ActionIcon from "@/components/ActionIcon";
 import Card from "@/components/Card";
 import {
