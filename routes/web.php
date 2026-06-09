@@ -20,6 +20,8 @@ Route::get('/showcase', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/@{username?}', [ProfileController::class, 'index'])->name('profile.other.index.');
+    Route::post('/profile/follow/@{username}', [ProfileController::class, 'follow'])->name('profile.follow');
     Route::get('/profile-id/', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

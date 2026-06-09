@@ -31,13 +31,20 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     const [commentProcessing, setCommentProcessing] = useState(false);
     const [valueTab, setValueTab] = useState('post');
     const [postContent,setPostContent] = useState('');
+    const [userIdLoggedIn,setUserIdLoggedIn] = useState(null);
+    const [userId,setUserId] = useState(null);
+
+    
 
     useEffect(() => {
         setPostsData(posts);
         setRepostsData(reposts);
         setRepliesData(replies);
         setMediaData(media);
+        setUserIdLoggedIn(auth?.id)
+        setUserId(user?.id)
     }, [posts, reposts, replies, media]);
+
 
     const handleTabs = (event, newValue) => {
         setValueTab(newValue);
@@ -219,6 +226,18 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
         setCommentModalOpen(true);
     };
 
+    const handleFollowUser= (e,username) => {
+         e.stopPropagation();
+        console.log(username);
+        axios.post(`/profile/follow/@${username}`)
+            .then((response) => {
+                console.log(response)
+            })
+            .catch((error) => {
+                console.error("Failed to :", error);
+            });
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title={`${user?.name || 'Profile'}`} />
@@ -272,19 +291,37 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
                                 <SquareKanban size={22} className="text-gray-400" />
                             </div>
                         </div>
-
-                        <div className='flex gap-3'>
-                            <Button 
-                                onClick={() => router.get(route('profile.edit'))}
-                                variant="secondary" 
-                                className="w-full"
-                            >
-                                Edit profile
-                            </Button>
-                            <Button variant="secondary" className="px-3">
-                                <Share2 size={18} />
-                            </Button>
-                        </div>
+                        {userIdLoggedIn == userId ? 
+                            <div className='flex gap-3'>
+                                <Button 
+                                    onClick={() => router.get(route('profile.edit'))}
+                                    variant="secondary" 
+                                    className="w-full"
+                                >
+                                    Edit profile
+                                </Button>
+                                <Button variant="secondary" className="px-3">
+                                    <Share2 size={18} />
+                                </Button>
+                            </div>
+                        : 
+                            <div className='flex gap-5'>
+                                 <Button 
+                                    onClick={(e) => handleFollowUser(e,user?.username)}
+                                    variant="primary" 
+                                    className="w-full"
+                                >
+                                    Follow
+                                </Button>
+                                 <Button 
+                                    onClick={() => router.get(route('profile.edit'))}
+                                    variant="secondary" 
+                                    className="w-full"
+                                >
+                                    Mention
+                                </Button>
+                            </div>
+                        }
 
                         <div className='mt-8 w-full border-b border-gray-100 dark:border-white/5'>
                             <Tabs 
