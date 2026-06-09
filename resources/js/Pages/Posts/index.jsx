@@ -310,7 +310,7 @@ export default function Index({ posts, auth = null }) {
             <div className="py-8 bg-gray-50 dark:bg-[#0f0f0f] min-h-screen">
                 <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Create Post Section */}
-                    <Card className="mb-6" animate={false}>
+                    <Card className="mb-6 overflow-visible" animate={false}>
                         <Card.Body>
                             <div className="flex gap-4">
                                 <div className="flex-shrink-0">
@@ -381,7 +381,7 @@ export default function Index({ posts, auth = null }) {
                                 </button>
                                 <EmojiPicker
                                     onSelectEmoji={insertEmoji}
-                                    placement="top"
+                                    placement="bottom"
                                 />
                                 <button className="p-2 rounded-full text-[#1F6F5F] hover:bg-[#1F6F5F]/5 transition-all">
                                     <Calendar size={20} />
