@@ -228,10 +228,11 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
 
     const handleFollowUser= (e,username) => {
          e.stopPropagation();
-        console.log(username);
+       
         axios.post(`/profile/follow/@${username}`)
             .then((response) => {
-                console.log(response)
+                console.log(response.data)
+                 router.reload();
             })
             .catch((error) => {
                 console.error("Failed to :", error);
