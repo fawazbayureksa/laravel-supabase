@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Repost;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class PostRepository
@@ -104,6 +105,12 @@ class PostRepository
     {
         $post = Post::findOrFail($id);
         $post->toggleLike(Auth::user());
+        return $post;
+    }
+    public function likeByUser(int|null $id, User $user)
+    {
+        $post = Post::findOrFail($id);
+        $post->toggleLike($user);
         return $post;
     }
 
@@ -224,4 +231,3 @@ class PostRepository
             ->get();
     }
 }
-
