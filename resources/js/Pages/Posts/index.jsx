@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
-import TextArea from "@/Components/TextArea";
-import Button from "@/Components/Button";
-import ActionIcon from "@/Components/ActionIcon";
-import Card from "@/Components/Card";
+import Button from "@/components/Button";
+import ActionIcon from "@/components/ActionIcon";
+import Card from "@/components/Card";
 import {
     SendHorizonal,
     Heart,
@@ -20,9 +19,10 @@ import {
     X,
 } from "lucide-react";
 import axios from "axios";
-import CommentModal from "@/Components/CommentModal";
-import EmojiPicker from "@/Components/EmojiPicker";
+import CommentModal from "@/components/CommentModal";
+import EmojiPicker from "@/components/EmojiPicker";
 import PostActionMenu from "../../components/PostActionOption";
+import TextArea from "../../components/TextArea";
 
 export default function Index({ posts, auth = null }) {
     const [data, setData] = useState(posts.data);

@@ -2,11 +2,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, MapPin, Save, AlertTriangle, Trash2, AtSign, AlignLeft, Camera, ArrowLeft, Upload } from 'lucide-react';
-import Card from '@/Components/Card';
-import Button from '@/Components/Button';
-import Input from '@/Components/Input';
-import TextArea from '@/Components/TextArea';
-import FileUpload from '@/Components/FileUpload';
+import Card from '@/components/Card';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import TextArea from '@/components/TextArea';
+import FileUpload from '@/components/FileUpload';
 
 export default function Edit({ auth, user }) {
     // Form for profile details

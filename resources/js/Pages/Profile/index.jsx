@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import Card from '@/Components/Card';
-import Button from '@/Components/Button';
-import ActionIcon from '@/Components/ActionIcon';
-import TextArea from '@/Components/TextArea';
-import CommentModal from '@/Components/CommentModal';
+import Card from '@/components/Card';
+import Button from '@/components/Button';
+import ActionIcon from '@/components/ActionIcon';
+import TextArea from '@/components/TextArea';
+import CommentModal from '@/components/CommentModal';
 import {
     ArrowLeft,
     Heart,
@@ -35,6 +35,7 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     const [userId,setUserId] = useState(null);
 
     
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
     useEffect(() => {
         setPostsData(posts);
@@ -237,6 +238,26 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
                 console.error("Failed to :", error);
             });
     }
+    const handleSubmitPost = () => {
+        if (postContent.trim() === '') return;
+        setIsLoadingSubmit(true);
+        axios.post('/posts', { body: postContent })
+            .then(() => {
+                setPostContent('');
+                router.get(
+                    route('profile.index'), {
+                        preserveState: true,
+                        preserveScroll: true,
+                    },
+                );
+            })
+            .catch((error) => {
+                console.error("Failed to create post:", error);
+            })
+            .finally(() => {
+                setIsLoadingSubmit(false);
+            });
+    };
 
     return (
         <AuthenticatedLayout>
@@ -376,7 +397,14 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
                                                 <div className="flex gap-1">
                                                     <ActionIcon icon={ImageIcon} className="w-8 h-8" />
                                                 </div>
-                                                <Button variant="primary" size="sm">Post</Button>
+                                                <Button 
+                                                    variant="primary" 
+                                                    size="sm"
+                                                    onClick={handleSubmitPost}
+                                                    processing={isLoadingSubmit}
+                                                >
+                                                    Post
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
