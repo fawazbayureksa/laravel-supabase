@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use App\Services\PostService;
+use App\Services\ProfileService;
 use App\Services\UserPreferenceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,18 +23,26 @@ class ProfileController extends Controller
      */
     protected UserPreferenceService $userPreferenceService;
     protected PostService $postService;
+    protected ProfileService $profileService;
 
-    public function __construct(UserPreferenceService $userPreferenceService, PostService $postService)
+    public function __construct(UserPreferenceService $userPreferenceService, PostService $postService, ProfileService $profileService)
     {
         $this->userPreferenceService = $userPreferenceService;
         $this->postService = $postService;
+        $this->profileService = $profileService;
     }
     /**
      * Display the user's profile form.
      */
-    public function index(Request $request)
+    public function index(Request $request, string|null $username)
     {
         $user = Auth::user();
+        $auth = null;
+
+        if (!empty($username)) {
+            $auth = Auth::user();
+            $user = User::where('username', $username)->first();
+        }
 
         if ($user) {
             $user->load('profile');
@@ -46,6 +55,7 @@ class ProfileController extends Controller
         $media = $this->postService->getUserMedia($user->id);
 
         return Inertia::render('Profile/index', [
+            'auth' => $auth,
             'user' => $user,
             'posts' => $posts,
             'reposts' => $reposts,
@@ -105,5 +115,10 @@ class ProfileController extends Controller
     public function upload(Request $request)
     {
         return $this->userPreferenceService->upload($request);
+    }
+
+    public function follow(string $username)
+    {
+        return $this->profileService->follow($username);
     }
 }
