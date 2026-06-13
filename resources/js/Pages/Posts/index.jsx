@@ -411,7 +411,9 @@ export default function Index({ posts, auth = null }) {
                                     {/* Post Header */}
                                     <div className="flex justify-between items-start mb-4">
                                         <div className="flex gap-3">
-                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden">
+                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden"
+                                              onClick={(e) => {e.stopPropagation(); router.visit(`/profile/@${post.user.username}`)}}
+                                            >
                                                 {post.user?.profile
                                                     ?.profil_picture ? (
                                                     <img
