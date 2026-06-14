@@ -7,6 +7,7 @@ import Button from '@/components/Button';
 import ActionIcon from '@/components/ActionIcon';
 import TextArea from '@/components/TextArea';
 import CommentModal from '@/components/CommentModal';
+import Modal from '@/components/Modal';
 import {
     ArrowLeft,
     Heart,
@@ -16,7 +17,11 @@ import {
     Share2,
     MoreHorizontal,
     SendHorizonal,
-    Image as ImageIcon
+    Image as ImageIcon,
+    ArrowUpDown,
+    ChevronDown,
+    ChevronRight,
+    X
 } from 'lucide-react';
 
 export default function Show({ post, auth = null }) {
@@ -25,6 +30,26 @@ export default function Show({ post, auth = null }) {
     const [selectedPost, setSelectedPost] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [userLoggedIn, setUserLoggedIn] = useState(auth);
+    const [sortBy, setSortBy] = useState('top');
+    const [showSortDropdown, setShowSortDropdown] = useState(false);
+    const [showActivityModal, setShowActivityModal] = useState(false);
+
+    const sortedComments = React.useMemo(() => {
+        if (!data.comments) return [];
+        const commentsCopy = [...data.comments];
+        if (sortBy === 'top') {
+            return commentsCopy.sort((a, b) => {
+                const likesDiff = (b.likes_count || 0) - (a.likes_count || 0);
+                if (likesDiff !== 0) return likesDiff;
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+        } else if (sortBy === 'newest') {
+            return commentsCopy.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        } else if (sortBy === 'oldest') {
+            return commentsCopy.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }
+        return commentsCopy;
+    }, [data.comments, sortBy]);
     const handleLike = (id) => {
         const originalPost = { ...data };
         const newIsLiked = !data.is_liked;
@@ -314,11 +339,88 @@ export default function Show({ post, auth = null }) {
 
                             {/* <hr></hr> */}
                             <div className="border-b border-gray-200 dark:border-white/4 mt-4"></div>
-                            <div className="border-b border-gray-200 dark:border-white/4 mt-8"></div>
+
+                            {/* Sorting & Activity Bar */}
+                            <div className="flex justify-between items-center py-2">
+                                {/* Left Side: Sorting Feature */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowSortDropdown(!showSortDropdown)}
+                                        className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-[#1F6F5F] dark:hover:text-[#2a917c] transition-colors py-1.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5"
+                                    >
+                                        <ArrowUpDown size={14} className="text-gray-400" />
+                                        <span>
+                                            {sortBy === 'top' ? 'Top' : sortBy === 'newest' ? 'Newest' : 'Oldest'}
+                                        </span>
+                                        <ChevronDown size={14} className="text-gray-400" />
+                                    </button>
+                                    
+                                    {showSortDropdown && (
+                                        <>
+                                            <div 
+                                                className="fixed inset-0 z-10" 
+                                                onClick={() => setShowSortDropdown(false)}
+                                            />
+                                            <div className="absolute left-0 mt-1 w-32 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/5 rounded-xl shadow-lg py-1 z-20 transition-all">
+                                                <button
+                                                    onClick={() => {
+                                                        setSortBy('top');
+                                                        setShowSortDropdown(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${
+                                                        sortBy === 'top' 
+                                                            ? 'text-[#1F6F5F] dark:text-[#2a917c] font-semibold' 
+                                                            : 'text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                                >
+                                                    Top
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setSortBy('newest');
+                                                        setShowSortDropdown(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${
+                                                        sortBy === 'newest' 
+                                                            ? 'text-[#1F6F5F] dark:text-[#2a917c] font-semibold' 
+                                                            : 'text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                                >
+                                                    Newest
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setSortBy('oldest');
+                                                        setShowSortDropdown(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${
+                                                        sortBy === 'oldest' 
+                                                            ? 'text-[#1F6F5F] dark:text-[#2a917c] font-semibold' 
+                                                            : 'text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                                >
+                                                    Oldest
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Right Side: View Activity */}
+                                <button
+                                    onClick={() => setShowActivityModal(true)}
+                                    className="flex items-center gap-0.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors py-1.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5"
+                                >
+                                    <span>View activity</span>
+                                    <ChevronRight size={14} className="text-gray-400" />
+                                </button>
+                            </div>
+
+                            <div className="border-b border-gray-200 dark:border-white/4 mb-4"></div>
 
                             <div className="space-y-4 mt-2">
-                                {data.comments?.length > 0 ? (
-                                    data.comments.map((comment) => (
+                                {sortedComments?.length > 0 ? (
+                                    sortedComments.map((comment) => (
                                         <div key={comment.id} className="transition-all">
                                             <div className="pt-3">
                                                 {/* Reply Header */}
@@ -415,6 +517,62 @@ export default function Show({ post, auth = null }) {
                 onSubmit={submitComment}
                 processing={processing}
             />
+
+            <Modal show={showActivityModal} onClose={() => setShowActivityModal(false)} maxWidth="md">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/5 bg-white/80 dark:bg-[#161616]/80 backdrop-blur-md sticky top-0 z-10">
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">Post Activity</h3>
+                    <button 
+                        onClick={() => setShowActivityModal(false)}
+                        className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+                
+                <div className="p-6 space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <Heart className="text-red-500 mb-2" size={24} />
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{data.likes_count || 0}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Likes</span>
+                        </div>
+                        
+                        <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <MessageCircle className="text-blue-500 mb-2" size={24} />
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{data.comments_count || 0}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Replies</span>
+                        </div>
+                        
+                        <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <Repeat2 className="text-green-500 mb-2" size={24} />
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{data.reposts_count || 0}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Reposts</span>
+                        </div>
+                        
+                        <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <Bookmark className="text-yellow-500 mb-2" size={24} />
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">{data.bookmarks_count || 0}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Bookmarks</span>
+                        </div>
+                    </div>
+                    
+                    <div className="p-4 border border-gray-100 dark:border-white/5 rounded-2xl space-y-3">
+                        <h4 className="font-semibold text-sm text-gray-900 dark:text-white">Engagement Details</h4>
+                        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                            <span>Appreciation Rate</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                                {data.likes_count ? `${Math.round((data.likes_count / (data.likes_count + data.comments_count + 1)) * 100)}%` : '0%'}
+                            </span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                            <span>Total Interactions</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                                {(data.likes_count || 0) + (data.comments_count || 0) + (data.reposts_count || 0) + (data.bookmarks_count || 0)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </AuthenticatedLayout>
     );
 }
