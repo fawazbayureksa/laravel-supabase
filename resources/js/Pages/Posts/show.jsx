@@ -247,6 +247,9 @@ export default function Show({ post, auth = null }) {
                                             {item.type === 'image' && (
                                                 <img src={item.path} className="w-full object-cover max-h-[500px]" alt="" />
                                             )}
+                                            {item.type === 'video' && (
+                                                <video src={item.path} controls className="w-full object-cover max-h-[500px]" />
+                                            )}
                                         </div>
                                     ))}
                                 </div>

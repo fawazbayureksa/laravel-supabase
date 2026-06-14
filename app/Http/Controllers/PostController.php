@@ -109,15 +109,18 @@ class PostController extends Controller
     {
         $request->validate([
             'body' => 'required_without:image|string|nullable',
-            'image' => 'nullable|image|max:20480', // 20MB max
+            'image' => 'nullable', // 20MB max
         ]);
 
         $data = $request->only(['body', 'thread_id', 'parent_id', 'visibility']);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('posts', 'public');
+            $file = $request->file('image');
+            $mime = $file->getMimeType();
+            $type = str_starts_with($mime, 'video/') ? 'video' : 'image';
+            $path = $file->store('posts', 'public');
             $data['media_path'] = asset('storage/' . $path);
+            $data['media_type'] = $type;
         }
 
         $post = $this->postService->create($data);

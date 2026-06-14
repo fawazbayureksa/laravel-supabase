@@ -83,7 +83,7 @@ class PostRepository
 
         if (isset($data['media_path'])) {
             $post->media()->create([
-                'type' => 'image',
+                'type' => $data['media_type'] ?? 'image',
                 'path' => $data['media_path'],
             ]);
         }
