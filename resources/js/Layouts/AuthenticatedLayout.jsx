@@ -19,7 +19,7 @@ import { route } from "ziggy-js";
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
-    const user = auth?.user;
+    const user = auth;
 
     const savedTheme = user?.preferences?.theme ?? "light";
     const [theme, setTheme] = useState(savedTheme);

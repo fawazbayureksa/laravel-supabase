@@ -12,7 +12,7 @@ class PostRepository
 {
     public function getAll()
     {
-        $perPage = 10;
+        $perPage = 100;
         $userId = Auth::id();
 
         return Post::with(['user.profile', 'media'])
