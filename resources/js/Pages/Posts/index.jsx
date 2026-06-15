@@ -26,7 +26,7 @@ import TextArea from "../../components/TextArea";
 
 export default function Index({ posts, auth = null }) {
     const [data, setData] = useState(posts.data);
-    const [userLoggedIn, setUserLoggedIn] = useState(auth);
+    const [userLoggedIn, setUserLoggedIn] = useState(null);
     const [commentModalOpen, setCommentModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const [commentProcessing, setCommentProcessing] = useState(false);
@@ -304,6 +304,10 @@ export default function Index({ posts, auth = null }) {
         e.stopPropagation();
     };
 
+    useEffect(() => {
+        setUserLoggedIn(auth);
+    },[auth]);
+
     return (
         <AuthenticatedLayout>
             <Head title="Posts" />
@@ -344,17 +348,25 @@ export default function Index({ posts, auth = null }) {
                                 </div>
                             </div>
 
-                            {/* Image Preview */}
+                            {/* Media Preview */}
                             {imagePreview && (
                                 <div className="mt-4 relative rounded-xl overflow-hidden group">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        className="w-full h-auto max-h-[400px] object-cover rounded-xl"
-                                    />
+                                    {selectedImage?.type?.startsWith("video/") ? (
+                                        <video
+                                            src={imagePreview}
+                                            controls
+                                            className="w-full h-auto max-h-[400px] object-cover rounded-xl"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            className="w-full h-auto max-h-[400px] object-cover rounded-xl"
+                                        />
+                                    )}
                                     <button
                                         onClick={removeImage}
-                                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all opacity-0 group-hover:opacity-100"
+                                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                                     >
                                         <X size={18} />
                                     </button>
@@ -365,7 +377,7 @@ export default function Index({ posts, auth = null }) {
                                 type="file"
                                 ref={fileInputRef}
                                 onChange={handleImageChange}
-                                accept="image/*"
+                                accept="image/*,video/*"
                                 className="hidden"
                             />
                         </Card.Body>
@@ -481,6 +493,14 @@ export default function Index({ posts, auth = null }) {
                                                                 media.alt_text ||
                                                                 "Post image"
                                                             }
+                                                            className="w-full h-auto object-cover max-h-[500px]"
+                                                        />
+                                                    )}
+                                                    {media.type === "video" && (
+                                                        <video
+                                                            src={media.path}
+                                                            controls
+                                                            onClick={(e) => e.stopPropagation()}
                                                             className="w-full h-auto object-cover max-h-[500px]"
                                                         />
                                                     )}
