@@ -51,6 +51,7 @@ export default function Show({ post, auth = null }) {
             });
     }
 
+
     const handleBookmark = (id) => {
         const originalPost = { ...data };
         const newIsBookmarked = !data.is_bookmarked;
@@ -215,9 +216,23 @@ export default function Show({ post, auth = null }) {
                             {/* Post Header */}
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-xl">
-                                        {data.user?.name?.[0] || 'U'}
-                                    </div>
+                                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden"
+                                            onClick={(e) => {e.stopPropagation(); router.visit(`/profile/@${post.user.username}`)}}
+                                        >
+                                            {data.user?.profile
+                                                ?.profil_picture ? (
+                                                <img
+                                                    src={
+                                                        data.user.profile
+                                                            .profil_picture
+                                                    }
+                                                    alt={data.user.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                data.user?.name?.[0] || "U"
+                                            )}
+                                        </div>
                                     <div>
                                         <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-lg">
                                             {data.user?.name || 'Anonymous User'}
