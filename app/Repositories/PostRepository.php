@@ -39,7 +39,7 @@ class PostRepository
             'user.profile',
             'media',
             'comments' => function ($query) use ($userId) {
-                $query->with('user')
+                $query->with('user.profile')
                     ->withCount(['likes', 'replies'])
                     ->withExists([
                         'likes as is_liked' => function ($q) use ($userId) {
@@ -133,6 +133,17 @@ class PostRepository
         $post = Post::findOrFail($id);
         return $post->comments()->create([
             'user_id' => Auth::id(),
+            'body' => $data['body'],
+            'parent_id' => $data['parent_id'] ?? null,
+            'image' => $data['image'] ?? null,
+        ]);
+    }
+
+    public function commentByPostAndUserId(int|null $id, int|null $user_id, object|array $data)
+    {
+        $post = Post::findOrFail($id);
+        return $post->comments()->create([
+            'user_id' => $user_id,
             'body' => $data['body'],
             'parent_id' => $data['parent_id'] ?? null,
             'image' => $data['image'] ?? null,

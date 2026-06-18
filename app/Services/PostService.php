@@ -68,6 +68,10 @@ class PostService
     {
         return $this->postRepository->comment($id, $data);
     }
+    public function commentByUser(int $id, int $userId, array|object $data)
+    {
+        return $this->postRepository->commentByPostAndUserId($id, $userId, $data);
+    }
 
     // public function unlike($id)
     // {
