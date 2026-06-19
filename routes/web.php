@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserPreferenceController;
 use Illuminate\Support\Facades\Route;
 
 use Inertia\Inertia;
+use Modules\Profile\Http\Controllers\ProfileController;
 
 Route::get('/', [PostController::class, 'index'])->name('index');
 

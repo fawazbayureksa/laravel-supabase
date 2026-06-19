@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
-use App\Services\PostService;
 use App\Services\ProfileService;
 use App\Services\UserPreferenceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 use Inertia\Inertia;
+use Modules\Post\Services\PostService;
 
 class ProfileController extends Controller
 {
