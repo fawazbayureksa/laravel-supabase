@@ -215,6 +215,7 @@ export default function Show({ post, auth = null }) {
             });
     }
 
+
     return (
         <AuthenticatedLayout>
             <Head title="Post" />
@@ -426,10 +427,27 @@ export default function Show({ post, auth = null }) {
                                                 {/* Reply Header */}
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div className="flex gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1F6F5F]/20 to-[#2a917c]/20 flex items-center justify-center text-[#1F6F5F] dark:text-[#2a917c] font-bold text-sm">
+                                                        {/* <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1F6F5F]/20 to-[#2a917c]/20 flex items-center justify-center text-[#1F6F5F] dark:text-[#2a917c] font-bold text-sm">
                                                             {comment.user?.name?.[0] || 'U'}
-                                                        </div>
-                                                        <div>
+                                                        </div> */}
+                                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1F6F5F] to-[#2a917c] flex items-center justify-center text-white font-bold shadow-lg shadow-[#1F6F5F]/20 text-lg overflow-hidden"
+                                                                    onClick={(e) => {e.stopPropagation(); router.visit(`/profile/@${post.user.username}`)}}
+                                                                >
+                                                                    {comment.user?.profile
+                                                                        ?.profil_picture ? (
+                                                                        <img
+                                                                            src={
+                                                                                comment.user.profile
+                                                                                    .profil_picture
+                                                                            }
+                                                                            alt={comment.user.name}
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        comment.user?.name?.[0] || "U"
+                                                                    )}
+                                                                </div>
+                                                            <div>
                                                             <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-[15px]">
                                                                 {comment.user?.name || 'Anonymous User'}
                                                             </h4>
