@@ -4,7 +4,6 @@ namespace Modules\Profile\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Services\PostService;
 use App\Services\ProfileService;
 use App\Services\UserPreferenceService;
 use Illuminate\Http\RedirectResponse;
@@ -12,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Modules\Post\Services\PostService;
 use Modules\User\Models\User;
 
 class ProfileController extends Controller
@@ -36,9 +36,9 @@ class ProfileController extends Controller
      */
     public function index(Request $request, string|null $username)
     {
+        dd($username);
         $user = Auth::user();
         $auth = null;
-
         if (!empty($username)) {
             $auth = Auth::user();
             $user = User::where('username', $username)->first();
