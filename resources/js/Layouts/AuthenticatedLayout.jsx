@@ -12,6 +12,9 @@ import {
     ChevronRight,
     User as UserIcon,
     LogIn,
+    Heart,
+    Search,
+    PlusIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActionIcon from "@/components/ActionIcon";
@@ -191,6 +194,12 @@ export default function AuthenticatedLayout({ header, children }) {
                             >
                                 Profile
                             </MobileNavItem>
+                            <MobileNavItem
+                                href={route("profile.index")}
+                                active={route().current("profile.index")}
+                            >
+                                Notification
+                            </MobileNavItem>
                         </nav>
 
                         <div className="pb-10 flex flex-col gap-3">
@@ -245,6 +254,24 @@ export default function AuthenticatedLayout({ header, children }) {
                     icon={LayoutDashboard}
                     isActive={route().current("index")}
                     onClick={() => router.visit(route("index"))}
+                    className="w-10 h-10"
+                />
+                <ActionIcon
+                    icon={Search}
+                    isActive={route().current("profile.index")}
+                    onClick={() => router.visit(route("profile.index"))}
+                    className="w-10 h-10"
+                />
+                <ActionIcon
+                    icon={PlusIcon}
+                    isActive={route().current("profile.index")}
+                    onClick={() => router.visit(route("profile.index"))}
+                    className="w-10 h-10"
+                />
+                <ActionIcon
+                    icon={Heart}
+                    isActive={route().current("profile.index")}
+                    onClick={() => router.visit(route("profile.index"))}
                     className="w-10 h-10"
                 />
                 <ActionIcon
