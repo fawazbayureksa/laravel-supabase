@@ -34,9 +34,36 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function index(Request $request, string|null $username)
+    public function index()
     {
-        dd($username);
+        $user = Auth::user();
+        $auth = null;
+        if (!empty($username)) {
+            $auth = Auth::user();
+            $user = User::where('username', $username)->first();
+        }
+
+        if ($user) {
+            $user->load('profile');
+            $user->loadCount(['followers', 'following']);
+        }
+
+        $posts = $this->postService->getUserPosts($user->id);
+        $reposts = $this->postService->getUserReposts($user->id);
+        $replies = $this->postService->getUserReplies($user->id);
+        $media = $this->postService->getUserMedia($user->id);
+
+        return Inertia::render('Profile/index', [
+            'auth' => $auth,
+            'user' => $user,
+            'posts' => $posts,
+            'reposts' => $reposts,
+            'replies' => $replies,
+            'media' => $media,
+        ]);
+    }
+    public function profile(Request $request, string|null $username)
+    {
         $user = Auth::user();
         $auth = null;
         if (!empty($username)) {

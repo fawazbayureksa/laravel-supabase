@@ -3,7 +3,6 @@
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserPreferenceController;
 use Illuminate\Support\Facades\Route;
-
 use Inertia\Inertia;
 use Modules\Profile\Http\Controllers\ProfileController;
 
@@ -19,7 +18,7 @@ Route::get('/showcase', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/@{username?}', [ProfileController::class, 'index'])->name('profile.other.index.');
+    Route::get('/profile/@{username?}', [ProfileController::class, 'profile'])->name('profile.other.index.');
     Route::post('/profile/follow/@{username}', [ProfileController::class, 'follow'])->name('profile.follow');
     Route::get('/profile-id/', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
