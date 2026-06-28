@@ -2,6 +2,7 @@
 
 namespace Modules\Post\Repositories;
 
+use Modules\Notification\Services\NotificationService;
 use Modules\Post\Models\Post;
 use Modules\Post\Models\Comment;
 use Modules\Post\Models\Repost;
@@ -10,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class PostRepository
 {
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
     public function getAll()
     {
         $perPage = 100;
@@ -67,7 +74,13 @@ class PostRepository
     public function likeComment($id)
     {
         $comment = Comment::findOrFail($id);
-        $comment->toggleLike(Auth::user());
+        $liked = $comment->toggleLike(Auth::user());
+        if ($liked && $comment->user_id !== Auth::id()) {
+            $this->notificationService->create(
+                $comment->user_id, Auth::id(), 'like', $comment->post ?? $comment,
+                ['post_excerpt' => substr($comment->body ?? '', 0, 100)]
+            );
+        }
         return $comment;
     }
 
@@ -104,7 +117,13 @@ class PostRepository
     public function like(int|null $id)
     {
         $post = Post::findOrFail($id);
-        $post->toggleLike(Auth::user());
+        $liked = $post->toggleLike(Auth::user());
+        if ($liked && $post->user_id !== Auth::id()) {
+            $this->notificationService->create(
+                $post->user_id, Auth::id(), 'like', $post,
+                ['post_excerpt' => substr($post->body ?? '', 0, 100)]
+            );
+        }
         return $post;
     }
     public function likeByUser(int|null $id, User $user)
@@ -131,12 +150,20 @@ class PostRepository
     public function comment(int|null $id, object|array $data)
     {
         $post = Post::findOrFail($id);
-        return $post->comments()->create([
+        $comment = $post->comments()->create([
             'user_id' => Auth::id(),
             'body' => $data['body'],
             'parent_id' => $data['parent_id'] ?? null,
             'image' => $data['image'] ?? null,
         ]);
+        if ($post->user_id !== Auth::id()) {
+            $type = $comment->parent_id ? 'reply' : 'comment';
+            $this->notificationService->create(
+                $post->user_id, Auth::id(), $type, $post,
+                ['post_excerpt' => substr($post->body ?? '', 0, 100)]
+            );
+        }
+        return $comment;
     }
 
     public function commentByPostAndUserId(int|null $id, int|null $user_id, object|array $data)

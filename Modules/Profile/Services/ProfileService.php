@@ -4,11 +4,18 @@ namespace Modules\Profile\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Modules\Notification\Services\NotificationService;
 use Modules\Profile\Models\Follow;
 use Modules\User\Models\User;
 
 class ProfileService
 {
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
     public function follow(string $username): Follow
     {
         $follower = Auth::user();
@@ -31,6 +38,12 @@ class ProfileService
                 'status' => 'accepted',
             ]
         );
+
+        if ($follow->wasRecentlyCreated) {
+            $this->notificationService->create(
+                $following->id, $follower->id, 'follow', $follow
+            );
+        }
 
         return $follow;
     }
@@ -71,11 +84,15 @@ class ProfileService
             ];
         }
 
-        Follow::create([
+        $follow = Follow::create([
             'follower_id' => $follower->id,
             'following_id' => $following->id,
             'status' => 'accepted',
         ]);
+
+        $this->notificationService->create(
+            $following->id, $follower->id, 'follow', $follow
+        );
 
         return [
             'following' => true,
