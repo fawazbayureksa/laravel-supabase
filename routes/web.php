@@ -42,4 +42,5 @@ Route::middleware('auth')->group(function () {
     Route::get('posts/user/{id}/replies', [PostController::class, 'getUserReplies'])->name('posts.user.replies');
 });
 
+
 require __DIR__ . '/auth.php';

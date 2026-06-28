@@ -34,7 +34,6 @@ export default function Index({ auth = null, user = null, posts = [], reposts = 
     const [userIdLoggedIn,setUserIdLoggedIn] = useState(null);
     const [userId,setUserId] = useState(null);
 
-    
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
     useEffect(() => {

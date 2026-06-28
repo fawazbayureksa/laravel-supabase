@@ -41,6 +41,8 @@ class ProfileController extends Controller
         if (!empty($username)) {
             $auth = Auth::user();
             $user = User::where('username', $username)->first();
+        } else {
+            $auth = Auth::user();
         }
 
         if ($user) {
