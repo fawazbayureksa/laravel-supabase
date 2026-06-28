@@ -40,6 +40,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');
     Route::get('posts/user/{id}/replies', [PostController::class, 'getUserReplies'])->name('posts.user.replies');
+
+    // Notification Routes
+    Route::get('/notifications', [\Modules\Notification\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\Modules\Notification\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\Modules\Notification\Http\Controllers\NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::get('/notifications/unread-count', [\Modules\Notification\Http\Controllers\NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
 });
 
 
