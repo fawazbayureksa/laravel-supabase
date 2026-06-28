@@ -270,8 +270,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 />
                 <ActionIcon
                     icon={Heart}
-                    isActive={route().current("profile.index")}
-                    onClick={() => router.visit(route("profile.index"))}
+                    isActive={route().current("notification.index")}
+                    onClick={() => router.visit(route("notification.index"))}
                     className="w-10 h-10"
                 />
                 <ActionIcon
