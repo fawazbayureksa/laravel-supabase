@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/devworklog/assets/spec/config.schema.json",
+  "version": 1,
+  "timezone": "Asia/Jakarta",
+  "worklogDir": "developer-worklog",
+  "language": "en",
+  "agents": [
+    "opencode"
+  ]
+}

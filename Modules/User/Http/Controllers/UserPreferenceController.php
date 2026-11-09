@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\User\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Services\UserPreferenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

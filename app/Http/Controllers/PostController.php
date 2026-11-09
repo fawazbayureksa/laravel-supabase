@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\PostService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Modules\User\Models\User;
 
 class PostController extends Controller
 {
@@ -20,10 +21,10 @@ class PostController extends Controller
     public function index()
     {
         $posts = $this->postService->getAll();
-
+        $user = User::with('profile')->find(Auth::id());
         return Inertia::render('Posts/index', [
             'posts' => $posts,
-            'auth' => Auth::user()?->load('profile') ?? null
+            'auth' => $user ?? null
         ]);
     }
 
@@ -74,7 +75,7 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $path = $image->store('comments', 'public');
-            $data['image'] = asset('storage/' . $path);
+            $data['image'] = $path;
         }
 
         $comment = $this->postService->comment($id, $data);
@@ -119,7 +120,7 @@ class PostController extends Controller
             $mime = $file->getMimeType();
             $type = str_starts_with($mime, 'video/') ? 'video' : 'image';
             $path = $file->store('posts', 'public');
-            $data['media_path'] = asset('storage/' . $path);
+            $data['media_path'] = $path;
             $data['media_type'] = $type;
         }
 

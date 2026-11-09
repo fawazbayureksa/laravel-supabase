@@ -64,12 +64,11 @@ class UserPreferenceService
 
         $image = $request->file('profil_picture');
         $path = $image->store('profil_picture', 'public');
-        $url = asset('storage/' . $path);
 
         $user = Auth::user();
         Profile::updateOrCreate(
             ['user_id' => $user->id],
-            ['profil_picture' => $url]
+            ['profil_picture' => $path]
         );
 
         return back()->with('success', 'Image uploaded successfully!');

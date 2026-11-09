@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Shared\Traits;
 
 use App\Models\Bookmark;
 use App\Models\User;

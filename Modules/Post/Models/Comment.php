@@ -2,6 +2,7 @@
 
 namespace Modules\Post\Models;
 
+use App\Shared\Traits\HasPublicFileUrl;
 use App\Traits\Likable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Modules\User\Models\User;
 
 class Comment extends Model
 {
-    use HasFactory, SoftDeletes, Likable;
+    use HasFactory, SoftDeletes, Likable, HasPublicFileUrl;
 
     protected $guarded = ['id'];
 
@@ -32,5 +33,10 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function getImageAttribute(?string $value): ?string
+    {
+        return $this->toPublicUrl($value);
     }
 }

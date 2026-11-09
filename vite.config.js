@@ -16,4 +16,14 @@ export default defineConfig({
             "@": resolve(__dirname, "resources/js"),
         },
     },
+    server: {
+        // Vite 5.4+ only allows localhost origins by default, which blocks
+        // module requests coming from Herd's *.test domains.
+        cors: {
+            origin: [
+                /^https?:\/\/localhost(?::\d+)?$/,
+                /^https?:\/\/[^/]+\.test(?::\d+)?$/,
+            ],
+        },
+    },
 });
